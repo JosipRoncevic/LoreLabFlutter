@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "508666584260",
+    "project_id": "lorelab-c63f0",
+    "storage_bucket": "lorelab-c63f0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508666584260:android:01870b403a219cde663d91",
+        "android_client_info": {
+          "package_name": "com.example.lorelabappf"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB45FvYV_uDKV0DIqHPAYW8HUChskKza_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
