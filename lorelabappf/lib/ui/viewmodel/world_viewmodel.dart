@@ -11,4 +11,15 @@ class WorldViewModel extends ChangeNotifier{
     worlds = await _repository.getWorlds();
     notifyListeners();
   }
+
+  Future<void> createWorld(String name, String description) async {
+    final newWorld = World(
+      id: '',
+      name: name,
+      description: description,
+    );
+
+    await _repository.addWorld(newWorld);
+    await loadWorlds();
+  }
 }

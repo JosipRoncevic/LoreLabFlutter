@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lorelabappf/ui/screens/create_world_screen.dart';
 
 class CreateDialog extends StatelessWidget{
   @override
@@ -13,7 +14,12 @@ class CreateDialog extends StatelessWidget{
             title: Text("World"),
             onTap: () {
               Navigator.pop(context);
-              print("Creating World...");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreatingWorldsScreen(),
+                ),
+              );
             },
           ),
           ListTile(
