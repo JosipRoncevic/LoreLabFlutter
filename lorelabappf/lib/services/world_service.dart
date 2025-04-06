@@ -15,4 +15,9 @@ class WorldService {
   Future<void> addWorld(World world) async {
     await _worldsRef.add(world.toMap());
   }
+
+  Future<void> updateWorld(World world) async {
+  await _worldsRef.doc(world.id).update(world.toMap());
+}
+
 }

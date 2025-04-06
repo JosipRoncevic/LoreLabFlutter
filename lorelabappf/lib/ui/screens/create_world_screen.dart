@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:lorelabappf/data/models/world_model.dart';
 import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class CreatingWorldsScreen extends StatefulWidget {
-  const CreatingWorldsScreen({super.key});
+  final World? world;
+  final bool isEditing;
+  
+  const CreatingWorldsScreen({
+    Key? key,
+    this.world,
+    this.isEditing = false,
+  }) : super(key:key);
 
   @override
   State<CreatingWorldsScreen> createState() => _CreatingWorldsScreenState();
@@ -11,27 +19,41 @@ class CreatingWorldsScreen extends StatefulWidget {
 
 class _CreatingWorldsScreenState extends State<CreatingWorldsScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _name = '';
-  String _description = '';
+  late String _name = '';
+  late String _description = '';
   bool _isLoading = false;
+
+  @override
+  void initState(){
+    super.initState();
+    _name = widget.world?.name ?? '';
+    _description = widget.world?.description ?? '';
+  }
 
   Future<void> _saveWorld() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
       setState(() => _isLoading = true);
 
       try {
-        await context
-            .read<WorldViewModel>()
-            .createWorld(_name.trim(), _description.trim());
+        final viewModel = context.read<WorldViewModel>();
+
+        if (widget.isEditing && widget.world != null) {
+          final updated = World(
+            id: widget.world!.id,
+            name: _name,
+            description: _description,
+          );
+          await viewModel.updateWorld(updated);
+        } else {
+          await viewModel.createWorld(_name, _description);
+        }
 
         Navigator.pop(context);
       } catch (e) {
         setState(() => _isLoading = false);
-
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving world: $e')),
+          SnackBar(content: Text('Error: $e')),
         );
       }
     }
@@ -40,41 +62,38 @@ class _CreatingWorldsScreenState extends State<CreatingWorldsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create New World')),
+      appBar: AppBar(
+        title: Text(widget.isEditing ? 'Edit World' : 'Create World'),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
               TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'World Name',
-                  border: OutlineInputBorder(),
-                ),
-                onSaved: (value) => _name = value ?? '',
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter a name' : null,
+                initialValue: _name,
+                decoration: InputDecoration(labelText: 'World Name'),
+                onSaved: (val) => _name = val ?? '',
+                validator: (val) =>
+                    val == null || val.isEmpty ? 'Enter a name' : null,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(),
-                ),
+                initialValue: _description,
                 maxLines: 5,
-                onSaved: (value) => _description = value ?? '',
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Enter a description'
-                    : null,
+                decoration: InputDecoration(labelText: 'Description'),
+                onSaved: (val) => _description = val ?? '',
+                validator: (val) =>
+                    val == null || val.isEmpty ? 'Enter a description' : null,
               ),
-              const SizedBox(height: 24),
+              Spacer(),
               _isLoading
-                  ? const CircularProgressIndicator()
+                  ? CircularProgressIndicator()
                   : ElevatedButton.icon(
+                      icon: Icon(Icons.save),
+                      label: Text(widget.isEditing ? 'Update' : 'Save'),
                       onPressed: _saveWorld,
-                      icon: const Icon(Icons.save),
-                      label: const Text('Save'),
                     ),
             ],
           ),

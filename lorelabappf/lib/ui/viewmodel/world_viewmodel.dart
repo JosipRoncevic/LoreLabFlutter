@@ -22,4 +22,10 @@ class WorldViewModel extends ChangeNotifier{
     await _repository.addWorld(newWorld);
     await loadWorlds();
   }
+
+  Future<void> updateWorld(World updatedWorld) async {
+  await _repository.updateWorld(updatedWorld);
+  await loadWorlds();
+}
+
 }
