@@ -20,4 +20,8 @@ class WorldService {
   await _worldsRef.doc(world.id).update(world.toMap());
 }
 
+    Future<void> deleteWorld(String id) async {
+      await _worldsRef.doc(id).delete();
+    }
+
 }

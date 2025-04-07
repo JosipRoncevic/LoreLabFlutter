@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/data/models/world_model.dart';
+import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
+import 'package:provider/provider.dart';
 import 'create_world_screen.dart';
 
 class WorldDetailScreen extends StatelessWidget {
@@ -27,6 +29,28 @@ class WorldDetailScreen extends StatelessWidget {
               );
             },
           ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () async {
+            final confirm = await showDialog<bool>(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: Text('Delete World'),
+                content: Text('Are you sure you want to delete this world?'),
+                actions: [
+                  TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Cancel')),
+                  TextButton(onPressed: () => Navigator.pop(context, true), child: Text('Delete')),
+                ],
+              ),
+            );
+
+            if (confirm == true) {
+              await context.read<WorldViewModel>().deleteWorld(world.id);
+              Navigator.pop(context);
+            }
+          },
+        ),
+
         ],
       ),
       body: Padding(

@@ -28,4 +28,9 @@ class WorldViewModel extends ChangeNotifier{
   await loadWorlds();
 }
 
+  Future<void> deleteWorld(String id) async {
+  await _repository.deleteWorld(id);
+  await loadWorlds();
+}
+
 }
