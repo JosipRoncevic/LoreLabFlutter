@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/ui/dialogs/create_dialog.dart';
-import 'package:lorelabappf/ui/screens/worlds_screen.dart';
+import 'package:lorelabappf/ui/screens/character/characters_screen.dart';
+import 'package:lorelabappf/ui/screens/world/worlds_screen.dart';
 
 class MainNavigation extends StatefulWidget{
   @override
@@ -12,7 +13,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   final List<Widget> _screens = [
     WorldsScreen(),
-    //CharactersScreen(),
+    CharactersScreen(),
     //StoriesScreen(),
   ];
 

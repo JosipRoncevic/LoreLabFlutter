@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lorelabappf/ui/screens/create_world_screen.dart';
-import 'package:lorelabappf/ui/screens/world_detail_screen.dart';
+import 'package:lorelabappf/ui/screens/world/create_world_screen.dart';
+import 'package:lorelabappf/ui/screens/world/world_detail_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../viewmodel/world_viewmodel.dart';
+import '../../viewmodel/world_viewmodel.dart';
 
 class WorldsScreen extends StatelessWidget {
   const WorldsScreen({super.key});

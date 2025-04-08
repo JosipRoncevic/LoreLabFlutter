@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lorelabappf/ui/screens/create_world_screen.dart';
+import 'package:lorelabappf/ui/screens/character/create_character_screen.dart';
+import 'package:lorelabappf/ui/screens/world/create_world_screen.dart';
 
 class CreateDialog extends StatelessWidget{
   @override
@@ -27,7 +28,12 @@ class CreateDialog extends StatelessWidget{
             title: Text("Character"),
             onTap: () {
               Navigator.pop(context);
-              print("Creating Character...");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreatingCharacterScreen(),
+                ),
+              );
             },
           ),
            ListTile(
