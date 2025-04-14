@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/ui/main_navigation.dart';
 import 'package:lorelabappf/ui/viewmodel/character_viewmodel.dart';
+import 'package:lorelabappf/ui/viewmodel/story_viewmodel.dart';
 import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => WorldViewModel()),
         ChangeNotifierProvider(create: (context) => CharacterViewmodel()),
+        ChangeNotifierProvider(create: (context) => StoryViewmodel()),
       ],
       child: MyApp(),
     )

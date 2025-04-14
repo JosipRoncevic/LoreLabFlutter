@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/ui/screens/character/create_character_screen.dart';
+import 'package:lorelabappf/ui/screens/story/create_story_screen.dart';
 import 'package:lorelabappf/ui/screens/world/create_world_screen.dart';
 
 class CreateDialog extends StatelessWidget{
@@ -41,7 +42,12 @@ class CreateDialog extends StatelessWidget{
             title: Text("Story"),
             onTap: () {
               Navigator.pop(context);
-              print("Creating Story...");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreatingStoryScreen(),
+                ),
+              );
             },
           ),
         ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/ui/dialogs/create_dialog.dart';
 import 'package:lorelabappf/ui/screens/character/characters_screen.dart';
+import 'package:lorelabappf/ui/screens/story/story_screen.dart';
 import 'package:lorelabappf/ui/screens/world/worlds_screen.dart';
 
 class MainNavigation extends StatefulWidget{
@@ -14,7 +15,7 @@ class _MainNavigationState extends State<MainNavigation> {
   final List<Widget> _screens = [
     WorldsScreen(),
     CharactersScreen(),
-    //StoriesScreen(),
+    StoryScreen(),
   ];
 
   void _onItemTapped(int index) {
