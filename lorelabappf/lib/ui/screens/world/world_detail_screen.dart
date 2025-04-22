@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/data/models/world_model.dart';
 import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
@@ -67,9 +68,29 @@ class WorldDetailScreen extends StatelessWidget {
               world.description,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
+                        const SizedBox(height: 12),
+            Text(
+              "Created on: ${formatTimestamp(world.createdOn)}",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            Text(
+              "Last updated: ${formatTimestamp(world.updatedOn)}",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+              
+            ),
           ],
         ),
       ),
     );
   }
+
+  String formatTimestamp(Timestamp timestamp) {
+    final date = timestamp.toDate();
+    return "${date.year}-${_twoDigits(date.month)}-${_twoDigits(date.day)} "
+        "${_twoDigits(date.hour)}:${_twoDigits(date.minute)}";
+  }
+
+  String _twoDigits(int n) => n.toString().padLeft(2, '0');
 }

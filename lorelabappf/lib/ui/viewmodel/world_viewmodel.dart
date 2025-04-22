@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lorelabappf/data/repository/world_repository.dart';
 import '../../data/models/world_model.dart';
@@ -12,11 +13,13 @@ class WorldViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> createWorld(String name, String description) async {
+  Future<void> createWorld({required name, required description, required createdOn, required updatedOn}) async {
     final newWorld = World(
       id: '',
       name: name,
       description: description,
+      createdOn: createdOn,
+      updatedOn: updatedOn,
     );
 
     await _repository.addWorld(newWorld);

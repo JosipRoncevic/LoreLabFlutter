@@ -67,17 +67,21 @@ class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
 
       try {
         final viewModel = context.read<CharacterViewmodel>();
-
+        final now = Timestamp.now();
+        
         if (widget.isEditing && widget.character != null) {
           final updated = Character(
             id: widget.character!.id,
             name: _name,
             backstory: _backstory,
             worldRef: _worldRef!,
+            createdOn: widget.character!.createdOn,
+            updatedOn: now,
+
           );
           await viewModel.updateCharacter(updated);
         } else {
-          await viewModel.createCharacter(_name, _backstory, _worldRef!);
+          await viewModel.createCharacter(name:_name, backstory:_backstory, worldRef:_worldRef!, createdOn: now, updatedOn: now);
         }
 
         Navigator.pop(context);

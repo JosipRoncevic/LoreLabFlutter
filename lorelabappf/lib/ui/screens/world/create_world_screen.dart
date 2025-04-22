@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/data/models/world_model.dart';
+import 'package:lorelabappf/ui/screens/world/worlds_screen.dart';
 import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -37,19 +39,23 @@ class _CreatingWorldsScreenState extends State<CreatingWorldsScreen> {
 
       try {
         final viewModel = context.read<WorldViewModel>();
+        final now = Timestamp.now();
 
         if (widget.isEditing && widget.world != null) {
           final updated = World(
             id: widget.world!.id,
             name: _name,
             description: _description,
+            createdOn: widget.world!.createdOn,
+            updatedOn: now,
           );
           await viewModel.updateWorld(updated);
+          Navigator.push(context, MaterialPageRoute(builder: (_) => WorldsScreen()));
         } else {
-          await viewModel.createWorld(_name, _description);
+            await viewModel.createWorld(name: _name,description:_description, createdOn: now, updatedOn: now);
+            Navigator.pop(context);
         }
 
-        Navigator.pop(context);
       } catch (e) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(

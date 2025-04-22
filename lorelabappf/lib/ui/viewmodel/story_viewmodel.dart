@@ -18,6 +18,8 @@ class StoryViewmodel extends ChangeNotifier {
     required String content,
     required DocumentReference worldRef,
     required List<DocumentReference> characterRefs,
+    required Timestamp createdOn,
+    required Timestamp updatedOn,
   }) async {
     final newStory = Story(
       id: '',
@@ -25,6 +27,8 @@ class StoryViewmodel extends ChangeNotifier {
       content: content,
       worldRef: worldRef,
       characterRefs: characterRefs,
+      createdOn: createdOn,
+      updatedOn: updatedOn
     );
 
     await _repository.addStory(newStory);

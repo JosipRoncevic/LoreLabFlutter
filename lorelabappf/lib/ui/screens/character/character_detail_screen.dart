@@ -94,9 +94,29 @@ class CharacterDetailScreen extends StatelessWidget {
                 }
               },
             ),
+            const SizedBox(height: 12),
+            Text(
+              "Created on: ${formatTimestamp(character.createdOn)}",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            Text(
+              "Last updated: ${formatTimestamp(character.updatedOn)}",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+              
+            ),
           ],
         ),
       ),
     );
   }
+
+  String formatTimestamp(Timestamp timestamp) {
+    final date = timestamp.toDate();
+    return "${date.year}-${_twoDigits(date.month)}-${_twoDigits(date.day)} "
+        "${_twoDigits(date.hour)}:${_twoDigits(date.minute)}";
+  }
+
+  String _twoDigits(int n) => n.toString().padLeft(2, '0');
 }

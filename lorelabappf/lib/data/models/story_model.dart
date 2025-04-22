@@ -6,6 +6,8 @@ class Story {
   final String content;
   final DocumentReference worldRef;
   final List<DocumentReference> characterRefs;
+  final Timestamp createdOn;
+  final Timestamp updatedOn;
 
   Story({
     required this.id,
@@ -13,6 +15,8 @@ class Story {
     required this.content,
     required this.worldRef,
     required this.characterRefs,
+    required this.createdOn,
+    required this.updatedOn,
   });
 
   factory Story.fromMap(Map<String, dynamic> map, String documentId) {
@@ -24,6 +28,8 @@ class Story {
       characterRefs: (map['charactersRef'] as List<dynamic>)
           .map((ref) => ref as DocumentReference)
           .toList(),
+      createdOn: map['createdOn'] ?? Timestamp.now(),
+      updatedOn: map['updatedOn'] ?? Timestamp.now(),
     );
   }
 
@@ -33,6 +39,8 @@ class Story {
       'content': content,
       'worldRef': worldRef,
       'charactersRef': characterRefs,
+      'createdOn': createdOn,
+      'updatedOn': updatedOn,
     };
   }
 }

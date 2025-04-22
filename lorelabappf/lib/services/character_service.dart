@@ -13,11 +13,18 @@ class CharacterService {
   }
 
   Future<void> addCharacter(Character character) async {
-    await _charactersRef.add(character.toMap());
+    await _charactersRef.add({
+      ...character.toMap(),
+      'createdOn': FieldValue.serverTimestamp(),
+      'updatedOn': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<void> updateCharacter(Character character) async {
-    await _charactersRef.doc(character.id).update(character.toMap());
+    await _charactersRef.doc(character.id).update({
+      ...character.toMap(),
+      'updatedOn': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<void> deleteCharacter(String id) async {

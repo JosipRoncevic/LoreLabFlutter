@@ -4,6 +4,7 @@ import 'package:lorelabappf/data/models/character_model.dart';
 import 'package:lorelabappf/data/models/story_model.dart';
 import 'package:lorelabappf/data/models/world_model.dart';
 import 'package:lorelabappf/ui/dialogs/character_selection_dialog.dart';
+import 'package:lorelabappf/ui/screens/story/story_screen.dart';
 import 'package:lorelabappf/ui/viewmodel/character_viewmodel.dart';
 import 'package:lorelabappf/ui/viewmodel/story_viewmodel.dart';
 import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
@@ -115,39 +116,40 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
       setState(() => _isLoading = true);
 
       final characterRefs = _selectedCharacterIds
-          .map((id) => FirebaseFirestore.instance.collection('characters').doc(id))
-          .toList();
+        .map((id) => FirebaseFirestore.instance.collection('characters').doc(id))
+        .toList();
 
-      try {
-        final viewModel = context.read<StoryViewmodel>();
+    try {
+      final viewModel = context.read<StoryViewmodel>();
+      final now = Timestamp.now();
 
-        if (widget.isEditing && widget.story != null) {
-          final updated = Story(
-            id: widget.story!.id,
-            title: _title,
-            content: _content,
-            worldRef: _worldRef!,
-            characterRefs: characterRefs,
-          );
-          await viewModel.updateStory(updated);
-        } else {
-          await viewModel.createStory(
-            title: _title,
-            content: _content,
-            worldRef: _worldRef!,
-            characterRefs: characterRefs,
-          );
-        }
-
-        Navigator.pop(context);
-      } catch (e) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+      if (widget.isEditing && widget.story != null) {
+        final updated = Story(
+          id: widget.story!.id,
+          title: _title,
+          content: _content,
+          worldRef: _worldRef!,
+          characterRefs: characterRefs,
+          createdOn: widget.story!.createdOn,
+          updatedOn: now,
         );
+        await viewModel.updateStory(updated);
+        Navigator.push(context, MaterialPageRoute(builder: (_) => StoryScreen()));
+
+      } else {
+        await viewModel.createStory(  title: _title,content: _content,worldRef: _worldRef!,characterRefs: characterRefs,createdOn: now,updatedOn: now,);
+        Navigator.pop(context);
       }
+
+      
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {

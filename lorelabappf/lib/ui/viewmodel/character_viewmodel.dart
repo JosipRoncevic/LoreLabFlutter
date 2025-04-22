@@ -13,14 +13,22 @@ class CharacterViewmodel extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> createCharacter(String name, String backstory, DocumentReference worldRef) async {
+  Future<void> createCharacter( {
+    required String name,
+    required String backstory,
+    required DocumentReference worldRef,
+    required Timestamp createdOn,
+    required Timestamp updatedOn,
+  }) 
+  async {
     final newCharacter = Character(
       id: '',
       name: name,
       backstory: backstory,
       worldRef: worldRef,
+      createdOn: createdOn,
+      updatedOn: updatedOn
     );
-
     await _repository.addCharacter(newCharacter);
     await loadCharacters();
   }

@@ -13,11 +13,18 @@ class StoryService {
   }
 
   Future<void> addStory(Story story) async {
-    await _storiesRef.add(story.toMap());
+    await _storiesRef.add({
+      ...story.toMap(),
+      'createdOn': FieldValue.serverTimestamp(),
+      'updatedOn': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<void> updateStory(Story story) async {
-    await _storiesRef.doc(story.id).update(story.toMap());
+    await _storiesRef.doc(story.id).update({
+      ...story.toMap(),
+      'updatedOn': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<void> deleteStory(String id) async {

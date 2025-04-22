@@ -10,11 +10,6 @@ class StoryDetailsScreen extends StatelessWidget {
 
   const StoryDetailsScreen({super.key, required this.story});
 
-  Future<String> _fetchWorldName(DocumentReference worldRef) async {
-    final doc = await worldRef.get();
-    return doc.exists ? (doc.data() as Map<String, dynamic>)['name'] ?? 'Unknown World' : 'Unknown World';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,19 +111,36 @@ class StoryDetailsScreen extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: snapshot.data!
-                      .map((name) => Chip(
-                    label: Text(name),
-                    backgroundColor: Colors.blue.shade100,
-                    ))
-                      .toList(),
+                        .map((name) => Chip(
+                              label: Text(name),
+                              backgroundColor: Colors.blue.shade100,
+                            ))
+                        .toList(),
                   );
                 }
               },
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "Created on: ${formatTimestamp(story.createdOn)}",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            Text(
+              "Last updated: ${formatTimestamp(story.updatedOn)}",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+              
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<String> _fetchWorldName(DocumentReference worldRef) async {
+    final doc = await worldRef.get();
+    return doc.exists ? (doc.data() as Map<String, dynamic>)['name'] ?? 'Unknown World' : 'Unknown World';
   }
 
   Future<List<String>> _fetchCharacterNames(List<DocumentReference> refs) async {
@@ -144,4 +156,12 @@ class StoryDetailsScreen extends StatelessWidget {
 
     return names;
   }
+
+  String formatTimestamp(Timestamp timestamp) {
+    final date = timestamp.toDate();
+    return "${date.year}-${_twoDigits(date.month)}-${_twoDigits(date.day)} "
+        "${_twoDigits(date.hour)}:${_twoDigits(date.minute)}";
+  }
+
+  String _twoDigits(int n) => n.toString().padLeft(2, '0');
 }
