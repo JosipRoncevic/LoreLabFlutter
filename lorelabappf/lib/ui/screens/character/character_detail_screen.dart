@@ -23,8 +23,8 @@ class CharacterDetailScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => CreatingCharacterScreen(
@@ -33,6 +33,9 @@ class CharacterDetailScreen extends StatelessWidget {
                   ),
                 ),
               );
+              if(result==true) {
+                Navigator.pop(context,true);
+              }
             },
           ),
           IconButton(
@@ -58,7 +61,7 @@ class CharacterDetailScreen extends StatelessWidget {
 
               if (confirm == true) {
                 await context.read<CharacterViewmodel>().deleteCharacter(character.id);
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               }
             },
           ),

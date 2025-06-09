@@ -134,11 +134,11 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
           updatedOn: now,
         );
         await viewModel.updateStory(updated);
-        Navigator.push(context, MaterialPageRoute(builder: (_) => StoryScreen()));
+        Navigator.pop(context, true);
 
       } else {
         await viewModel.createStory(  title: _title,content: _content,worldRef: _worldRef!,characterRefs: characterRefs,createdOn: now,updatedOn: now,);
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       }
 
       

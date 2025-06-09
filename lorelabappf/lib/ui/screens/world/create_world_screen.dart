@@ -50,7 +50,8 @@ class _CreatingWorldsScreenState extends State<CreatingWorldsScreen> {
             updatedOn: now,
           );
           await viewModel.updateWorld(updated);
-          Navigator.push(context, MaterialPageRoute(builder: (_) => WorldsScreen()));
+          Navigator.pop(context);
+          //Navigator.push(context, MaterialPageRoute(builder: (_) => WorldsScreen()));
         } else {
             await viewModel.createWorld(name: _name,description:_description, createdOn: now, updatedOn: now);
             Navigator.pop(context);

@@ -80,11 +80,12 @@ class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
 
           );
           await viewModel.updateCharacter(updated);
+           Navigator.pop(context, true);
         } else {
           await viewModel.createCharacter(name:_name, backstory:_backstory, worldRef:_worldRef!, createdOn: now, updatedOn: now);
+           Navigator.pop(context);
         }
 
-        Navigator.pop(context);
       } catch (e) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(

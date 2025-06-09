@@ -18,8 +18,8 @@ class StoryDetailsScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => CreatingStoryScreen(
@@ -28,6 +28,9 @@ class StoryDetailsScreen extends StatelessWidget {
                   ),
                 ),
               );
+              if (result == true){
+                Navigator.pop(context, true);
+              }
             },
           ),
           IconButton(
@@ -53,7 +56,7 @@ class StoryDetailsScreen extends StatelessWidget {
 
               if (confirm == true) {
                 await context.read<StoryViewmodel>().deleteStory(story.id);
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               }
             },
           ),
@@ -94,32 +97,42 @@ class StoryDetailsScreen extends StatelessWidget {
               "Characters:",
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            FutureBuilder<List<String>>(
-              future: _fetchCharacterNames(story.characterRefs),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _fetchCharacterNamesWithValidation(story.characterRefs, story.worldRef),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Padding(
-                    padding: EdgeInsets.only(top: 8.0),
-                    child: CircularProgressIndicator(),
-                  );
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return const Text("Failed to load characters");
                 } else if (snapshot.data == null || snapshot.data!.isEmpty) {
                   return const Text("No characters associated with this story.");
                 } else {
-                  return Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: snapshot.data!
-                        .map((name) => Chip(
-                              label: Text(name),
-                              backgroundColor: Colors.blue.shade100,
-                            ))
-                        .toList(),
-                  );
-                }
-              },
-            ),
+                  return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: snapshot.data!.map((char) {
+                    final isMismatch = char['isMismatch'] == true;
+                    return Chip(
+                    label: Text(char['name']),
+                    backgroundColor: isMismatch ? Colors.red.shade100 : Colors.blue.shade100,
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 8),
+                if (snapshot.data!.any((c) => c['isMismatch'] == true))
+                  Text(
+                    "⚠ Some characters are not in the same world as this story.",
+                    style: TextStyle(color: Colors.red.shade700, fontStyle: FontStyle.italic),
+                  ),
+                ],
+              );
+            }
+          },
+        ),
+
             const SizedBox(height: 12),
             Text(
               "Created on: ${formatTimestamp(story.createdOn)}",
@@ -143,19 +156,27 @@ class StoryDetailsScreen extends StatelessWidget {
     return doc.exists ? (doc.data() as Map<String, dynamic>)['name'] ?? 'Unknown World' : 'Unknown World';
   }
 
-  Future<List<String>> _fetchCharacterNames(List<DocumentReference> refs) async {
-    final names = <String>[];
+  Future<List<Map<String, dynamic>>> _fetchCharacterNamesWithValidation(
+      List<DocumentReference> refs, DocumentReference storyWorldRef) async {
+    final characters = <Map<String, dynamic>>[];
 
     for (final ref in refs) {
       final doc = await ref.get();
       if (doc.exists) {
         final data = doc.data() as Map<String, dynamic>;
-        names.add(data['name'] ?? 'Unnamed');
+        final name = data['name'] ?? 'Unnamed';
+        final characterWorldRef = data['worldId'];
+
+        final isMismatch = characterWorldRef?.path != storyWorldRef.path;
+
+        characters.add({
+          'name': name,
+          'isMismatch': isMismatch,
+        });
       }
     }
-
-    return names;
-  }
+    return characters;
+}
 
   String formatTimestamp(Timestamp timestamp) {
     final date = timestamp.toDate();
