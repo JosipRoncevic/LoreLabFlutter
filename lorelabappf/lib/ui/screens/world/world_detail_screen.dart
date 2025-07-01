@@ -6,6 +6,7 @@ import 'package:lorelabappf/data/models/story_model.dart';
 import 'package:lorelabappf/ui/screens/character/character_detail_screen.dart';
 import 'package:lorelabappf/ui/screens/story/story_details_screen.dart';
 import 'package:lorelabappf/ui/screens/world/create_world_screen.dart';
+import 'package:lorelabappf/ui/themes/cosmic_them.dart';
 import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -29,12 +30,12 @@ class _WorldDetailScreenState extends State<WorldDetailScreen> {
   }
 
   void _loadData() {
-  final worldRef = FirebaseFirestore.instance.collection('worlds').doc(widget.world.id);
-  setState(() {
-    _charactersFuture = _fetchCharacters(worldRef);
-    _storiesFuture = _fetchStories(worldRef);
-  });
-}
+    final worldRef = FirebaseFirestore.instance.collection('worlds').doc(widget.world.id);
+    setState(() {
+      _charactersFuture = _fetchCharacters(worldRef);
+      _storiesFuture = _fetchStories(worldRef);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +69,7 @@ class _WorldDetailScreenState extends State<WorldDetailScreen> {
                 context: context,
                 builder: (_) => AlertDialog(
                   title: const Text('Delete World'),
-                  content:
-                      const Text('Are you sure you want to delete this world?'),
+                  content: const Text('Are you sure you want to delete this world?'),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(context, false),
@@ -89,117 +89,115 @@ class _WorldDetailScreenState extends State<WorldDetailScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(world.name,
-                  style: Theme.of(context).textTheme.headlineMedium),
-              const SizedBox(height: 12),
-              Text(world.description,
-                  style: Theme.of(context).textTheme.bodyLarge),
-              const SizedBox(height: 24),
-              Text("Characters in this world:",
-                  style: Theme.of(context).textTheme.titleMedium),
-              FutureBuilder<List<Character>>(
-                future: _charactersFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return const Text("Failed to load characters");
-                  } else if (snapshot.data == null || snapshot.data!.isEmpty) {
-                    return const Text("No characters found.");
-                  } else {
-                    return Wrap(
-                      spacing: 8,
-                      children: snapshot.data!
-                          .map((character) => GestureDetector(
-                                onTap: () async {
-                                  final result = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => CharacterDetailScreen(
-                                          character: character),
-                                    ),
-                                  );
-                                  if (result == true){
-                                    setState(() {
-                                      _loadData();
-                                    });
-                                  }
-                                },
-                                child: Chip(
-                                  label: Text(character.name),
-                                  backgroundColor: Colors.blue.shade100,
-                                ),
-                              ))
-                          .toList(),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 24),
-              Text("Stories in this world:",
-                  style: Theme.of(context).textTheme.titleMedium),
-              FutureBuilder<List<Story>>(
-                future: _storiesFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return const Text("Failed to load stories");
-                  } else if (snapshot.data == null || snapshot.data!.isEmpty) {
-                    return const Text("No stories found.");
-                  } else {
-                    return Wrap(
-                      spacing: 8,
-                      children: snapshot.data!
-                          .map((story) => GestureDetector(
-                                onTap: () async {
-                                  final result = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          StoryDetailsScreen(story: story),
-                                    ),
-                                  );
+      body: Container(
+        //decoration: CosmicTheme.backgroundDecoration,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(world.name, style: CosmicTheme.headingStyle),
+                const SizedBox(height: 12),
+                Text(world.description, style: CosmicTheme.bodyStyle),
+                const SizedBox(height: 24),
 
-                                  if (result == true) {
-                                    setState(() {
-                                      _loadData();
-                                    });
-                                    
-                                  }
-                                },
-                                child: Chip(
-                                  label: Text(story.title),
-                                  backgroundColor: Colors.green.shade100,
-                                ),
-                              ))
-                          .toList(),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 24),
-              Text(
-                "Created on: ${formatTimestamp(world.createdOn)}",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(fontStyle: FontStyle.italic),
-              ),
-              Text(
-                "Last updated: ${formatTimestamp(world.updatedOn)}",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(fontStyle: FontStyle.italic),
-              ),
-            ],
+                Text("Characters in this world:", style: CosmicTheme.listTitleStyle),
+                const SizedBox(height: 8),
+                FutureBuilder<List<Character>>(
+                  future: _charactersFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(color: CosmicTheme.galaxyPink);
+                    } else if (snapshot.hasError) {
+                      return Text("Failed to load characters", style: CosmicTheme.bodyStyle);
+                    } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+                      return Text("No characters found.", style: CosmicTheme.bodyStyle);
+                    } else {
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: snapshot.data!
+                            .map((character) => GestureDetector(
+                                  onTap: () async {
+                                    final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => CharacterDetailScreen(character: character),
+                                      ),
+                                    );
+                                    if (result == true) {
+                                      setState(() {
+                                        _loadData();
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    decoration: CosmicTheme.listItemDecoration2,
+                                    child: Text(character.name, style: CosmicTheme.bodyStyle),
+                                  ),
+                                ))
+                            .toList(),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                Text("Stories in this world:", style: CosmicTheme.listTitleStyle),
+                const SizedBox(height: 8),
+                FutureBuilder<List<Story>>(
+                  future: _storiesFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(color: CosmicTheme.galaxyPink);
+                    } else if (snapshot.hasError) {
+                      return Text("Failed to load stories", style: CosmicTheme.bodyStyle);
+                    } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+                      return Text("No stories found.", style: CosmicTheme.bodyStyle);
+                    } else {
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: snapshot.data!
+                            .map((story) => GestureDetector(
+                                  onTap: () async {
+                                    final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => StoryDetailsScreen(story: story),
+                                      ),
+                                    );
+                                    if (result == true) {
+                                      setState(() {
+                                        _loadData();
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    decoration: CosmicTheme.listItemDecoration3,
+                                    child: Text(story.title, style: CosmicTheme.bodyStyle),
+                                  ),
+                                ))
+                            .toList(),
+                      );
+                    }
+                  },
+                ),
+
+                const SizedBox(height: 24),
+                Text(
+                  "Created on: ${formatTimestamp(world.createdOn)}",
+                  style: CosmicTheme.bodyStyle.copyWith(fontStyle: FontStyle.italic, fontSize: 14),
+                ),
+                Text(
+                  "Last updated: ${formatTimestamp(world.updatedOn)}",
+                  style: CosmicTheme.bodyStyle.copyWith(fontStyle: FontStyle.italic, fontSize: 14),
+                ),
+              ],
+            ),
           ),
         ),
       ),

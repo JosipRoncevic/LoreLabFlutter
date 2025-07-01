@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/data/models/story_model.dart';
 import 'package:lorelabappf/ui/screens/story/create_story_screen.dart';
+import 'package:lorelabappf/ui/themes/cosmic_them.dart';
 import 'package:lorelabappf/ui/viewmodel/story_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +29,7 @@ class StoryDetailsScreen extends StatelessWidget {
                   ),
                 ),
               );
-              if (result == true){
+              if (result == true) {
                 Navigator.pop(context, true);
               }
             },
@@ -62,90 +63,87 @@ class StoryDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
+      body: Container(
+        //decoration: CosmicTheme.backgroundDecoration,
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              story.title,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              story.content,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            const SizedBox(height: 12),
-            FutureBuilder<String>(
-              future: _fetchWorldName(story.worldRef),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text("Loading world...");
-                } else if (snapshot.hasError) {
-                  return const Text("Error loading world");
-                } else {
-                  return Text(
-                    "World: ${snapshot.data}",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  );
-                }
-              },
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "Characters:",
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            FutureBuilder<List<Map<String, dynamic>>>(
-              future: _fetchCharacterNamesWithValidation(story.characterRefs, story.worldRef),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return const Text("Failed to load characters");
-                } else if (snapshot.data == null || snapshot.data!.isEmpty) {
-                  return const Text("No characters associated with this story.");
-                } else {
-                  return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: snapshot.data!.map((char) {
-                    final isMismatch = char['isMismatch'] == true;
-                    return Chip(
-                    label: Text(char['name']),
-                    backgroundColor: isMismatch ? Colors.red.shade100 : Colors.blue.shade100,
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 8),
-                if (snapshot.data!.any((c) => c['isMismatch'] == true))
-                  Text(
-                    "⚠ Some characters are not in the same world as this story.",
-                    style: TextStyle(color: Colors.red.shade700, fontStyle: FontStyle.italic),
-                  ),
-                ],
-              );
-            }
-          },
-        ),
-
-            const SizedBox(height: 12),
-            Text(
-              "Created on: ${formatTimestamp(story.createdOn)}",
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontStyle: FontStyle.italic,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(story.title, style: CosmicTheme.headingStyle),
+              const SizedBox(height: 12),
+              Text(story.content, style: CosmicTheme.bodyStyle),
+              const SizedBox(height: 12),
+              FutureBuilder<String>(
+                future: _fetchWorldName(story.worldRef),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text("Loading world...", style: CosmicTheme.bodyStyle);
+                  } else if (snapshot.hasError) {
+                    return const Text("Error loading world", style: CosmicTheme.bodyStyle);
+                  } else {
+                    return Text("World: ${snapshot.data}", style: CosmicTheme.listTitleStyle);
+                  }
+                },
               ),
-            ),
-            Text(
-              "Last updated: ${formatTimestamp(story.updatedOn)}",
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
-              
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text("Characters:", style: CosmicTheme.listTitleStyle),
+              const SizedBox(height: 8),
+              FutureBuilder<List<Map<String, dynamic>>>(
+                future: _fetchCharacterNamesWithValidation(story.characterRefs, story.worldRef),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator(color: CosmicTheme.galaxyPink);
+                  } else if (snapshot.hasError) {
+                    return const Text("Failed to load characters", style: CosmicTheme.bodyStyle);
+                  } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+                    return const Text("No characters associated with this story.", style: CosmicTheme.bodyStyle);
+                  } else {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: snapshot.data!.map((char) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: CosmicTheme.listItemDecoration2,
+                              child: Text(char['name'], style: CosmicTheme.bodyStyle),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 8),
+                        if (snapshot.data!.any((c) => c['isMismatch'] == true))
+                          Text(
+                            "⚠ Some characters are not in the same world as this story.",
+                            style: CosmicTheme.bodyStyle.copyWith(
+                              color: Colors.red.shade700,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                      ],
+                    );
+                  }
+                },
+              ),
+              const SizedBox(height: 12),
+              Text(
+                "Created on: ${formatTimestamp(story.createdOn)}",
+                style: CosmicTheme.bodyStyle.copyWith(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                "Last updated: ${formatTimestamp(story.updatedOn)}",
+                style: CosmicTheme.bodyStyle.copyWith(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -176,7 +174,7 @@ class StoryDetailsScreen extends StatelessWidget {
       }
     }
     return characters;
-}
+  }
 
   String formatTimestamp(Timestamp timestamp) {
     final date = timestamp.toDate();

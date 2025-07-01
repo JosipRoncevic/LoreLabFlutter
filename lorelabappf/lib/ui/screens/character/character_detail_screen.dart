@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/data/models/character_model.dart';
 import 'package:lorelabappf/ui/screens/character/create_character_screen.dart';
+import 'package:lorelabappf/ui/themes/cosmic_them.dart';
 import 'package:lorelabappf/ui/viewmodel/character_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -33,8 +34,8 @@ class CharacterDetailScreen extends StatelessWidget {
                   ),
                 ),
               );
-              if(result==true) {
-                Navigator.pop(context,true);
+              if (result == true) {
+                Navigator.pop(context, true);
               }
             },
           ),
@@ -67,49 +68,45 @@ class CharacterDetailScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              character.name,
-              style: Theme.of(context).textTheme.headlineMedium,
+      body: Container(
+        // decoration: CosmicTheme.backgroundDecoration,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(character.name, style: CosmicTheme.headingStyle),
+                const SizedBox(height: 12),
+
+                Text(character.backstory, style: CosmicTheme.bodyStyle),
+                const SizedBox(height: 24),
+
+                FutureBuilder<String>(
+                  future: _fetchWorldName(character.worldRef),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(color: CosmicTheme.galaxyPink);
+                    } else if (snapshot.hasError) {
+                      return Text("Error loading world", style: CosmicTheme.bodyStyle);
+                    } else {
+                      return Text("World: ${snapshot.data}", style: CosmicTheme.listTitleStyle);
+                    }
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                Text(
+                  "Created on: ${formatTimestamp(character.createdOn)}",
+                  style: CosmicTheme.bodyStyle.copyWith(fontStyle: FontStyle.italic, fontSize: 14),
+                ),
+                Text(
+                  "Last updated: ${formatTimestamp(character.updatedOn)}",
+                  style: CosmicTheme.bodyStyle.copyWith(fontStyle: FontStyle.italic, fontSize: 14),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            Text(
-              character.backstory,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            const SizedBox(height: 12),
-            FutureBuilder<String>(
-              future: _fetchWorldName(character.worldRef),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text("Loading world...");
-                } else if (snapshot.hasError) {
-                  return const Text("Error loading world");
-                } else {
-                  return Text(
-                    "World: ${snapshot.data}",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  );
-                }
-              },
-            ),
-            const SizedBox(height: 12),
-            Text(
-              "Created on: ${formatTimestamp(character.createdOn)}",
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            Text(
-              "Last updated: ${formatTimestamp(character.updatedOn)}",
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
-              
-            ),
-          ],
+          ),
         ),
       ),
     );

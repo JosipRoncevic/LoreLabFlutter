@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/ui/main_navigation.dart';
+import 'package:lorelabappf/ui/themes/cosmic_them.dart';
 import 'package:lorelabappf/ui/viewmodel/character_viewmodel.dart';
 import 'package:lorelabappf/ui/viewmodel/story_viewmodel.dart';
 import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: CosmicTheme.themeData,
       home: MainNavigation(),
     );
   }
