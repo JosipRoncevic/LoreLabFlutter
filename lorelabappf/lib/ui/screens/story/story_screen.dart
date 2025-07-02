@@ -64,7 +64,7 @@ class StoryScreen extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           Icons.edit,
-                          color: CosmicTheme.starWhite.withOpacity(0.8),
+                          color: CosmicTheme.editGreen,
                         ),
                         onPressed: () {
                           Navigator.push(
@@ -81,7 +81,7 @@ class StoryScreen extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           Icons.delete,
-                          color: CosmicTheme.galaxyPink.withOpacity(0.8),
+                          color: CosmicTheme.deleteRed,
                         ),
                         onPressed: () async {
                           final confirm = await showDialog<bool>(
@@ -108,7 +108,7 @@ class StoryScreen extends StatelessWidget {
                                   onPressed: () => Navigator.pop(context, true),
                                   child: Text(
                                     'Delete',
-                                    style: TextStyle(color: CosmicTheme.galaxyPink),
+                                    style: TextStyle(color: CosmicTheme.deleteRed),
                                   ),
                                 ),
                               ],

@@ -64,8 +64,7 @@ class CharactersScreen extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           Icons.edit,
-                          color: CosmicTheme.starWhite.withOpacity(0.8),
-                        ),
+                          color: CosmicTheme.editGreen                        ),
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -81,7 +80,7 @@ class CharactersScreen extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           Icons.delete,
-                          color: CosmicTheme.galaxyPink.withOpacity(0.8),
+                          color: CosmicTheme.deleteRed,
                         ),
                         onPressed: () async {
                           final confirm = await showDialog<bool>(

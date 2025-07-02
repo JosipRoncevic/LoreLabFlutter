@@ -65,27 +65,41 @@ class _WorldDetailScreenState extends State<WorldDetailScreen> {
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text('Delete World'),
-                  content: const Text('Are you sure you want to delete this world?'),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Cancel')),
-                    TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: const Text('Delete')),
-                  ],
-                ),
-              );
-
-              if (confirm == true) {
+                final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              backgroundColor: CosmicTheme.deepSpace,
+                              title: Text(
+                                'Delete World',
+                                style: CosmicTheme.headingStyle.copyWith(fontSize: 20),
+                              ),
+                              content: Text(
+                                'Are you sure you want to delete "${world.name}"?',
+                                style: CosmicTheme.bodyStyle,
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, false),
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(color: CosmicTheme.starWhite.withOpacity(0.7)),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: Text(
+                                    'Delete',
+                                    style: TextStyle(color: CosmicTheme.deleteRed),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirm == true) {
                 await context.read<WorldViewModel>().deleteWorld(world.id);
-                if (context.mounted) Navigator.pop(context);
+                Navigator.pop(context, true);
               }
-            },
+            }
           ),
         ],
       ),

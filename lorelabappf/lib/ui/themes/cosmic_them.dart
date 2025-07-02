@@ -8,6 +8,7 @@ class CosmicTheme {
   static const Color galaxyPink = Color(0xFFEC4899);
   static const Color deleteRed = Color.fromARGB(255, 224, 5, 5);
   static const Color editGreen = Color.fromARGB(255, 0, 166, 8);
+  static const Color characterBlue = Color.fromARGB(255, 32, 209, 249);
   
   // Simple gradient for backgrounds
   static const LinearGradient backgroundGradient = LinearGradient(

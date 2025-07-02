@@ -5,6 +5,7 @@ import 'package:lorelabappf/data/models/story_model.dart';
 import 'package:lorelabappf/data/models/world_model.dart';
 import 'package:lorelabappf/ui/dialogs/character_selection_dialog.dart';
 import 'package:lorelabappf/ui/screens/story/story_screen.dart';
+import 'package:lorelabappf/ui/themes/cosmic_them.dart';
 import 'package:lorelabappf/ui/viewmodel/character_viewmodel.dart';
 import 'package:lorelabappf/ui/viewmodel/story_viewmodel.dart';
 import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
@@ -180,43 +181,94 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
                     val == null || val.isEmpty ? 'Enter content' : null,
               ),
               SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedWorldId,
-                items: _worlds.map((world) {
-                  return DropdownMenuItem(
-                    value: world.id,
-                    child: Text(world.name),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedWorldId = value;
-                    _worldRef = FirebaseFirestore.instance
-                        .collection('worlds')
-                        .doc(value);
-                  });
-                },
-                decoration: InputDecoration(labelText: 'Select World'),
-                validator: (value) =>
-                    value == null ? 'Please select a world' : null,
-              ),
+               DropdownButtonFormField<String>(
+  value: _selectedWorldId,
+  items: _worlds.map((world) {
+    return DropdownMenuItem(
+      value: world.id,
+      child: Text(
+        world.name,
+        style: CosmicTheme.bodyStyle, // Use themed text
+      ),
+    );
+  }).toList(),
+  onChanged: (value) {
+    setState(() {
+      _selectedWorldId = value;
+      _worldRef = FirebaseFirestore.instance.collection('worlds').doc(value);
+    });
+  },
+  decoration: InputDecoration(
+    labelText: 'Select World',
+    labelStyle: CosmicTheme.bodyStyle,
+    filled: true,
+    fillColor: CosmicTheme.cosmicPurple.withOpacity(0.2),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: CosmicTheme.galaxyPink, width: 1),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: CosmicTheme.galaxyPink, width: 1),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: CosmicTheme.deleteRed),
+      borderRadius: BorderRadius.circular(12),
+    ),
+  ),
+  dropdownColor: CosmicTheme.cosmicPurple,
+  iconEnabledColor: CosmicTheme.galaxyPink,
+  style: CosmicTheme.bodyStyle,
+  validator: (value) => value == null ? 'Please select a world' : null,
+),
+
               SizedBox(height: 24),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text('Characters', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              ElevatedButton(
-                onPressed: _showCharacterSelectionDialog,
-                child: Text('Choose Characters (${_selectedCharacterIds.length})'),
-              ),
-              Spacer(),
-              _isLoading
-                  ? CircularProgressIndicator()
-                  : ElevatedButton.icon(
-                      icon: Icon(Icons.save),
-                      label: Text(widget.isEditing ? 'Update' : 'Save'),
-                      onPressed: _saveStory,
-                    ),
+
+Align(
+  alignment: Alignment.centerLeft,
+  child: Text(
+    'Characters',
+    style: CosmicTheme.listSubtitleStyle,
+  ),
+),
+
+SizedBox(height: 8),
+
+SizedBox(
+  width: double.infinity,
+  child: ElevatedButton(
+    onPressed: _showCharacterSelectionDialog,
+    style: ElevatedButton.styleFrom(
+      backgroundColor: CosmicTheme.cosmicPurple,
+      padding: EdgeInsets.symmetric(vertical: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      side: BorderSide(color: CosmicTheme.characterBlue),
+      elevation: 6,
+      shadowColor: CosmicTheme.galaxyPink.withOpacity(0.5),
+    ),
+    child: Text(
+      'Choose Characters (${_selectedCharacterIds.length})',
+      style: CosmicTheme.bodyStyle.copyWith(
+        color: CosmicTheme.starWhite,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  ),
+),
+
+Spacer(),
+
+_isLoading
+    ? CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation(CosmicTheme.galaxyPink),
+      )
+    : ElevatedButton.icon(
+        icon: Icon(Icons.save),
+        label: Text(widget.isEditing ? 'Update' : 'Save'),
+        onPressed: _saveStory,
+      ),
             ],
           ),
         ),

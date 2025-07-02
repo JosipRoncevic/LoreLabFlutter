@@ -42,25 +42,37 @@ class CharacterDetailScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text('Delete Character'),
-                  content: const Text('Are you sure you want to delete this Character?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Delete'),
-                    ),
-                  ],
-                ),
-              );
-
-              if (confirm == true) {
+                                        final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              backgroundColor: CosmicTheme.deepSpace,
+                              title: Text(
+                                'Delete Character',
+                                style: CosmicTheme.headingStyle.copyWith(fontSize: 20),
+                              ),
+                              content: Text(
+                                'Are you sure you want to delete "${character.name}"?',
+                                style: CosmicTheme.bodyStyle,
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, false),
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(color: CosmicTheme.starWhite.withOpacity(0.7)),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: Text(
+                                    'Delete',
+                                    style: TextStyle(color: CosmicTheme.deleteRed),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirm == true) {
                 await context.read<CharacterViewmodel>().deleteCharacter(character.id);
                 Navigator.pop(context, true);
               }
