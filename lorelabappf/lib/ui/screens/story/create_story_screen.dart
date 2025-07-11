@@ -196,6 +196,7 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
     setState(() {
       _selectedWorldId = value;
       _worldRef = FirebaseFirestore.instance.collection('worlds').doc(value);
+      _selectedCharacterIds = [];
     });
   },
   decoration: InputDecoration(

@@ -37,6 +37,11 @@ class CharactersScreen extends StatelessWidget {
                 decoration: CosmicTheme.listItemDecoration2, // Using blue edge version
                 child: ListTile(
                   contentPadding: EdgeInsets.all(16),
+                  leading: Icon(
+                    Icons.person,
+                    size: 36,
+                    color: CosmicTheme.characterBlue,
+                  ),
                   title: Text(
                     character.name,
                     style: CosmicTheme.listTitleStyle,

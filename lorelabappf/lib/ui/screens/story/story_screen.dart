@@ -37,6 +37,11 @@ class StoryScreen extends StatelessWidget {
                 decoration: CosmicTheme.listItemDecoration3, // Using blue edge version
                 child: ListTile(
                   contentPadding: EdgeInsets.all(16),
+                  leading: Icon(
+                    Icons.book,
+                    size: 36,
+                    color: CosmicTheme.storyGreen,
+                  ),
                   title: Text(
                     story.title,
                     style: CosmicTheme.listTitleStyle,
