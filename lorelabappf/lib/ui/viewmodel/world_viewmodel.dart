@@ -12,13 +12,14 @@ class WorldViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> createWorld({required name, required description, required createdOn, required updatedOn}) async {
+  Future<void> createWorld({required name, required description, required createdOn, required updatedOn, required userId}) async {
     final newWorld = World(
       id: '',
       name: name,
       description: description,
       createdOn: createdOn,
       updatedOn: updatedOn,
+      userId: userId,
     );
 
     await _repository.addWorld(newWorld);

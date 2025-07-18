@@ -6,6 +6,7 @@ class World {
   final String description;
   final Timestamp createdOn;
   final Timestamp updatedOn;
+  final String userId;
 
 
   World({
@@ -14,6 +15,7 @@ class World {
     required this.description,
     required this.createdOn,
     required this.updatedOn,
+    required this.userId
   });
 
   factory World.fromMap(Map<String, dynamic> map, String documentId){
@@ -23,6 +25,7 @@ class World {
       description: map['description'],
       createdOn: map['createdOn'] ?? Timestamp.now(),
       updatedOn: map['updatedOn'] ?? Timestamp.now(),
+      userId: map['userId'],
     );
   }
 
@@ -32,6 +35,7 @@ class World {
       'description': description,
       'createdOn': createdOn,
       'updatedOn': updatedOn,
+      'userId': userId,
     };
   }
 }

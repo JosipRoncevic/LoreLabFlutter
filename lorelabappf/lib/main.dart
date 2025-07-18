@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lorelabappf/authentication/auth_screen.dart';
 import 'package:lorelabappf/ui/main_navigation.dart';
 import 'package:lorelabappf/ui/themes/cosmic_them.dart';
 import 'package:lorelabappf/ui/viewmodel/character_viewmodel.dart';
@@ -27,8 +28,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: CosmicTheme.themeData,
-      home: MainNavigation(),
+      home: AuthScreen(),
     );
   }
 }

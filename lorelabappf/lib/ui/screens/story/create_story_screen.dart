@@ -4,7 +4,6 @@ import 'package:lorelabappf/data/models/character_model.dart';
 import 'package:lorelabappf/data/models/story_model.dart';
 import 'package:lorelabappf/data/models/world_model.dart';
 import 'package:lorelabappf/ui/dialogs/character_selection_dialog.dart';
-import 'package:lorelabappf/ui/screens/story/story_screen.dart';
 import 'package:lorelabappf/ui/themes/cosmic_them.dart';
 import 'package:lorelabappf/ui/viewmodel/character_viewmodel.dart';
 import 'package:lorelabappf/ui/viewmodel/story_viewmodel.dart';

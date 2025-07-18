@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lorelabappf/authentication/auth_screen.dart';
 import 'package:lorelabappf/ui/dialogs/create_dialog.dart';
 import 'package:lorelabappf/ui/screens/character/characters_screen.dart';
 import 'package:lorelabappf/ui/screens/story/story_screen.dart';
@@ -12,7 +14,8 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
-  
+  final user = FirebaseAuth.instance.currentUser;
+
   final List<Widget> _screens = [
     WorldsScreen(),
     CharactersScreen(),
@@ -32,6 +35,14 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => AuthScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +55,25 @@ class _MainNavigationState extends State<MainNavigation> {
               CosmicTheme.logoAsset,
               height: 40,
             ),
-
+            actions: [
+              PopupMenuButton<String>(
+                icon: Icon(Icons.person),
+                onSelected: (value) {
+                  if (value == 'logout') _logout();
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'user',
+                    enabled: false,
+                    child: Text(user?.email ?? "Unknown User"),
+                  ),
+                  PopupMenuItem(
+                    value: 'logout',
+                    child: Text("Logout"),
+                  ),
+                ],
+              ),
+            ],
           ),
           body: _screens[_selectedIndex],
           floatingActionButton: FloatingActionButton(
@@ -56,34 +85,21 @@ class _MainNavigationState extends State<MainNavigation> {
             onTap: _onItemTapped,
             items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.public), 
-                label: 'Worlds'
+                icon: Icon(Icons.public),
+                label: 'Worlds',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person), 
-                label: 'Characters'
+                icon: Icon(Icons.person),
+                label: 'Characters',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.book), 
-                label: 'Stories'
+                icon: Icon(Icons.book),
+                label: 'Stories',
               ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  String _getAppBarTitle(int index) {
-    switch (index) {
-      case 0:
-        return 'Worlds';
-      case 1:
-        return 'Characters';
-      case 2:
-        return 'Stories';
-      default:
-        return '';
-    }
   }
 }

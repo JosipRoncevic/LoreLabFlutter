@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/data/models/world_model.dart';
-import 'package:lorelabappf/ui/screens/world/worlds_screen.dart';
 import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +24,7 @@ class _CreatingWorldsScreenState extends State<CreatingWorldsScreen> {
   late String _name = '';
   late String _description = '';
   bool _isLoading = false;
+  final userId = FirebaseAuth.instance.currentUser.toString();
 
   @override
   void initState(){
@@ -48,12 +49,13 @@ class _CreatingWorldsScreenState extends State<CreatingWorldsScreen> {
             description: _description,
             createdOn: widget.world!.createdOn,
             updatedOn: now,
+            userId: userId,
           );
           await viewModel.updateWorld(updated);
           Navigator.pop(context);
           //Navigator.push(context, MaterialPageRoute(builder: (_) => WorldsScreen()));
         } else {
-            await viewModel.createWorld(name: _name,description:_description, createdOn: now, updatedOn: now);
+            await viewModel.createWorld(name: _name,description:_description, createdOn: now, updatedOn: now, userId: userId);
             Navigator.pop(context);
         }
 
