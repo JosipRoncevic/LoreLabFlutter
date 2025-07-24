@@ -18,6 +18,7 @@ class StoryViewmodel extends ChangeNotifier {
     required String content,
     required DocumentReference worldRef,
     required List<DocumentReference> characterRefs,
+    required String userId,
     required Timestamp createdOn,
     required Timestamp updatedOn,
   }) async {
@@ -27,6 +28,7 @@ class StoryViewmodel extends ChangeNotifier {
       content: content,
       worldRef: worldRef,
       characterRefs: characterRefs,
+      userId: userId,
       createdOn: createdOn,
       updatedOn: updatedOn
     );

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lorelabappf/data/models/story_model.dart';
 
 class StoryService {
@@ -6,23 +7,42 @@ class StoryService {
     FirebaseFirestore.instance.collection('stories');
 
   Future<List<Story>> fetchStories() async {
-    var snapshot = await _storiesRef.get();
-    return snapshot.docs.map((doc) => Story
-      .fromMap(doc.data() as Map<String, dynamic>, doc.id))
-      .toList();
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if(userId == null) return [];
+
+    var snapshot = await _storiesRef
+      .where('userId', isEqualTo: userId)
+      .orderBy('createdOn', descending: true)
+      .get();
+    
+    return snapshot.docs.map(
+      (doc) => Story.fromMap(doc.data() as Map<String, dynamic>, doc.id),
+    ).toList();
   }
 
   Future<void> addStory(Story story) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
     await _storiesRef.add({
-      ...story.toMap(),
+      'title': story.title,
+      'content': story.content,
+      'worldId': story.worldRef,
+      'characterRefs': story.characterRefs,
+      'userId': userId,
       'createdOn': FieldValue.serverTimestamp(),
       'updatedOn': FieldValue.serverTimestamp(),
     });
   }
 
   Future<void> updateStory(Story story) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
     await _storiesRef.doc(story.id).update({
-      ...story.toMap(),
+      'title': story.title,
+      'content': story.content,
+      'worldId': story.worldRef,
+      'characterRefs': story.characterRefs,
+      'userId': userId,
       'updatedOn': FieldValue.serverTimestamp(),
     });
   }

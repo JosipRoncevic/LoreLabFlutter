@@ -19,6 +19,7 @@ class CharacterViewmodel extends ChangeNotifier{
     required DocumentReference worldRef,
     required Timestamp createdOn,
     required Timestamp updatedOn,
+    required String userId,
   }) 
   async {
     final newCharacter = Character(
@@ -27,7 +28,8 @@ class CharacterViewmodel extends ChangeNotifier{
       backstory: backstory,
       worldRef: worldRef,
       createdOn: createdOn,
-      updatedOn: updatedOn
+      updatedOn: updatedOn,
+      userId: userId,
     );
     await _repository.addCharacter(newCharacter);
     await loadCharacters();

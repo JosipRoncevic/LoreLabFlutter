@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/data/models/character_model.dart';
 import 'package:lorelabappf/data/models/world_model.dart';
@@ -23,11 +24,12 @@ class CreatingCharacterScreen extends StatefulWidget {
 
 class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
   final _formKey = GlobalKey<FormState>();
-  late String _name;
-  late String _backstory;
+  late String _name = '';
+  late String _backstory = '';
   DocumentReference? _worldRef;
   String? _selectedWorldId;
   bool _isLoading = false;
+  final userId = FirebaseAuth.instance.currentUser?.uid ?? ''; // Fixed: Get UID, not User object
 
   List<World> _worlds = [];
 
@@ -63,6 +65,13 @@ class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
         return;
       }
 
+      if (userId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User not authenticated')),
+        );
+        return;
+      }
+
       _formKey.currentState!.save();
       setState(() => _isLoading = true);
 
@@ -78,13 +87,20 @@ class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
             worldRef: _worldRef!,
             createdOn: widget.character!.createdOn,
             updatedOn: now,
-
+            userId: userId
           );
           await viewModel.updateCharacter(updated);
-           Navigator.pop(context, true);
+          Navigator.pop(context, true);
         } else {
-          await viewModel.createCharacter(name:_name, backstory:_backstory, worldRef:_worldRef!, createdOn: now, updatedOn: now);
-           Navigator.pop(context);
+          await viewModel.createCharacter(
+            name: _name, 
+            backstory: _backstory, 
+            worldRef: _worldRef!, 
+            createdOn: now, 
+            updatedOn: now, 
+            userId: userId
+          );
+          Navigator.pop(context);
         }
 
       } catch (e) {
@@ -126,45 +142,45 @@ class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
                     val == null || val.isEmpty ? 'Enter a backstory' : null,
               ),
               DropdownButtonFormField<String>(
-  value: _selectedWorldId,
-  items: _worlds.map((world) {
-    return DropdownMenuItem(
-      value: world.id,
-      child: Text(
-        world.name,
-        style: CosmicTheme.bodyStyle, // Use themed text
-      ),
-    );
-  }).toList(),
-  onChanged: (value) {
-    setState(() {
-      _selectedWorldId = value;
-      _worldRef = FirebaseFirestore.instance.collection('worlds').doc(value);
-    });
-  },
-  decoration: InputDecoration(
-    labelText: 'Select World',
-    labelStyle: CosmicTheme.bodyStyle,
-    filled: true,
-    fillColor: CosmicTheme.cosmicPurple.withOpacity(0.2),
-    enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: CosmicTheme.galaxyPink, width: 1),
-      borderRadius: BorderRadius.circular(12),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: CosmicTheme.galaxyPink, width: 1),
-      borderRadius: BorderRadius.circular(12),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: CosmicTheme.deleteRed),
-      borderRadius: BorderRadius.circular(12),
-    ),
-  ),
-  dropdownColor: CosmicTheme.cosmicPurple,
-  iconEnabledColor: CosmicTheme.galaxyPink,
-  style: CosmicTheme.bodyStyle,
-  validator: (value) => value == null ? 'Please select a world' : null,
-),
+                value: _selectedWorldId,
+                items: _worlds.map((world) {
+                  return DropdownMenuItem(
+                    value: world.id,
+                    child: Text(
+                      world.name,
+                      style: CosmicTheme.bodyStyle, // Use themed text
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedWorldId = value;
+                    _worldRef = FirebaseFirestore.instance.collection('worlds').doc(value);
+                  });
+                },
+                decoration: InputDecoration(
+                  labelText: 'Select World',
+                  labelStyle: CosmicTheme.bodyStyle,
+                  filled: true,
+                  fillColor: CosmicTheme.cosmicPurple.withOpacity(0.2),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: CosmicTheme.galaxyPink, width: 1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: CosmicTheme.galaxyPink, width: 1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: CosmicTheme.deleteRed),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                dropdownColor: CosmicTheme.cosmicPurple,
+                iconEnabledColor: CosmicTheme.galaxyPink,
+                style: CosmicTheme.bodyStyle,
+                validator: (value) => value == null ? 'Please select a world' : null,
+              ),
 
               Spacer(),
               _isLoading

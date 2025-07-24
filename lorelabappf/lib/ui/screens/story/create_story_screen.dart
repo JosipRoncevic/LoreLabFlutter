@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lorelabappf/data/models/character_model.dart';
 import 'package:lorelabappf/data/models/story_model.dart';
@@ -31,6 +32,8 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
   DocumentReference? _worldRef;
   String? _selectedWorldId;
   bool _isLoading = false;
+  final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+
 
   List<World> _worlds = [];
   List<Character> _characters = [];
@@ -112,6 +115,13 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
         return;
       }
 
+      if (userId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User not authenticated')),
+        );
+        return;
+      }
+
       _formKey.currentState!.save();
       setState(() => _isLoading = true);
 
@@ -130,6 +140,7 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
           content: _content,
           worldRef: _worldRef!,
           characterRefs: characterRefs,
+          userId: userId,
           createdOn: widget.story!.createdOn,
           updatedOn: now,
         );
@@ -137,7 +148,7 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
         Navigator.pop(context, true);
 
       } else {
-        await viewModel.createStory(  title: _title,content: _content,worldRef: _worldRef!,characterRefs: characterRefs,createdOn: now,updatedOn: now,);
+        await viewModel.createStory(  title: _title,content: _content,worldRef: _worldRef!,characterRefs: characterRefs,userId: userId, createdOn: now,updatedOn: now,);
         Navigator.pop(context, true);
       }
 
@@ -187,7 +198,7 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
       value: world.id,
       child: Text(
         world.name,
-        style: CosmicTheme.bodyStyle, // Use themed text
+        style: CosmicTheme.bodyStyle,
       ),
     );
   }).toList(),
