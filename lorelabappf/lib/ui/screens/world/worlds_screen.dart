@@ -16,7 +16,7 @@ class WorldsScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent, // Let the cosmic background show through
-      appBar: AppBar(title: Text('Worlds')),
+      //appBar: AppBar(title: Text('Worlds')),
       body: Consumer<WorldViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.worlds.isEmpty) {
@@ -37,6 +37,11 @@ class WorldsScreen extends StatelessWidget {
                 decoration: CosmicTheme.listItemDecoration,
                 child: ListTile(
                   contentPadding: EdgeInsets.all(16),
+                  leading: Icon(
+                    Icons.public,
+                    size: 36,
+                    color: CosmicTheme.galaxyPink,
+                  ),
                   title: Text(
                     world.name,
                     style: CosmicTheme.listTitleStyle,

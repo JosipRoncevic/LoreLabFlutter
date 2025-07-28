@@ -16,7 +16,7 @@ class StoryScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent, // Let the cosmic background show through
-      appBar: AppBar(title: Text('Stories')),
+      //appBar: AppBar(title: Text('Stories')),
       body: Consumer<StoryViewmodel>(
         builder: (context, viewModel, child) {
           if (viewModel.stories.isEmpty) {

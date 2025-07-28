@@ -15,8 +15,8 @@ class CharactersScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // Let the cosmic background show through
-      appBar: AppBar(title: Text('Characters')),
+      backgroundColor: Colors.transparent,
+      //appBar: AppBar(title: Text('Characters')),
       body: Consumer<CharacterViewmodel>(
         builder: (context, viewModel, child) {
           if (viewModel.characters.isEmpty) {
@@ -34,7 +34,7 @@ class CharactersScreen extends StatelessWidget {
               final character = viewModel.characters[index];
               return Container(
                 margin: EdgeInsets.only(bottom: 12),
-                decoration: CosmicTheme.listItemDecoration2, // Using blue edge version
+                decoration: CosmicTheme.listItemDecoration2,
                 child: ListTile(
                   contentPadding: EdgeInsets.all(16),
                   leading: Icon(

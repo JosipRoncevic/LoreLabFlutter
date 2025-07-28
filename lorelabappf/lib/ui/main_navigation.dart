@@ -43,6 +43,8 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 
+  final List<String> _titles = ['Worlds', 'Characters', 'Stories'];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,10 +53,19 @@ class _MainNavigationState extends State<MainNavigation> {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            title: Image.asset(
-              CosmicTheme.logoAsset,
-              height: 40,
-            ),
+  title: Row(
+    children: [
+      Image.asset(
+        CosmicTheme.logoAsset,
+        height: 40,
+      ),
+      SizedBox(width: 8),
+      Text(
+        _titles[_selectedIndex],
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+    ],
+  ),
             actions: [
               PopupMenuButton<String>(
                 icon: Icon(Icons.person),

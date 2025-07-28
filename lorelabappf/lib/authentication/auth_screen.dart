@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lorelabappf/ui/main_navigation.dart';
+import 'package:lorelabappf/ui/themes/cosmic_them.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -66,7 +67,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
+      backgroundColor: CosmicTheme.cosmicPurple,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -74,16 +75,20 @@ class _AuthScreenState extends State<AuthScreen> {
             key: _formKey,
             child: Column(
               children: [
+                Image.asset(
+        CosmicTheme.logoAsset,
+        height: 300,
+      ),
                 Text(
-                  isLogin ? "Welcome Back" : "Create Account",
-                  style: TextStyle(color: Colors.white, fontSize: 28),
+                  isLogin ? "Welcome Back!" : "Create Account",
+                  style: TextStyle(color: CosmicTheme.starWhite, fontSize: 28),
                 ),
                 SizedBox(height: 24),
                 TextFormField(
                   controller: emailController,
                   validator: (value) => value!.isEmpty ? 'Enter email' : null,
                   decoration: _inputDecoration("Email"),
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: CosmicTheme.cosmicPurple),
                 ),
                 SizedBox(height: 16),
                 TextFormField(
@@ -91,7 +96,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   obscureText: true,
                   validator: (value) => value!.length < 6 ? 'Password too short' : null,
                   decoration: _inputDecoration("Password"),
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: CosmicTheme.cosmicPurple)
                 ),
                 if (!isLogin) ...[
                   SizedBox(height: 16),
@@ -100,7 +105,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     obscureText: true,
                     validator: (value) => value!.isEmpty ? 'Confirm password' : null,
                     decoration: _inputDecoration("Confirm Password"),
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: CosmicTheme.cosmicPurple),
                   ),
                 ],
                 SizedBox(height: 20),
@@ -119,7 +124,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     isLogin
                         ? "Don't have an account? Sign Up"
                         : "Already have an account? Sign In",
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(color: CosmicTheme.galaxyPink),
                   ),
                 )
               ],
@@ -133,9 +138,7 @@ class _AuthScreenState extends State<AuthScreen> {
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(color: Colors.white),
       filled: true,
-      fillColor: Colors.grey[800],
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
