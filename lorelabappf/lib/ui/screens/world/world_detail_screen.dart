@@ -7,6 +7,8 @@ import 'package:lorelabappf/ui/screens/character/character_detail_screen.dart';
 import 'package:lorelabappf/ui/screens/story/story_details_screen.dart';
 import 'package:lorelabappf/ui/screens/world/create_world_screen.dart';
 import 'package:lorelabappf/ui/themes/cosmic_them.dart';
+import 'package:lorelabappf/ui/viewmodel/character_viewmodel.dart';
+import 'package:lorelabappf/ui/viewmodel/story_viewmodel.dart';
 import 'package:lorelabappf/ui/viewmodel/world_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -30,12 +32,17 @@ class _WorldDetailScreenState extends State<WorldDetailScreen> {
   }
 
   void _loadData() {
-    final worldRef = FirebaseFirestore.instance.collection('worlds').doc(widget.world.id);
-    setState(() {
-      _charactersFuture = _fetchCharacters(worldRef);
-      _storiesFuture = _fetchStories(worldRef);
-    });
-  }
+  final String worldRef = widget.world.id;
+  setState(() {
+    _charactersFuture = context
+        .read<CharacterViewmodel>()
+        .loadCharactersForWorld(worldRef);
+
+    _storiesFuture = context
+        .read<StoryViewmodel>()
+        .loadStoriesForWorld(worldRef);
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -216,28 +223,6 @@ class _WorldDetailScreenState extends State<WorldDetailScreen> {
         ),
       ),
     );
-  }
-
-  Future<List<Character>> _fetchCharacters(DocumentReference worldRef) async {
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('characters')
-        .where('worldId', isEqualTo: worldRef)
-        .get();
-
-    return querySnapshot.docs
-        .map((doc) => Character.fromMap(doc.data(), doc.id))
-        .toList();
-  }
-
-  Future<List<Story>> _fetchStories(DocumentReference worldRef) async {
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('stories')
-        .where('worldRef', isEqualTo: worldRef)
-        .get();
-
-    return querySnapshot.docs
-        .map((doc) => Story.fromMap(doc.data(), doc.id))
-        .toList();
   }
 
   String formatTimestamp(Timestamp timestamp) {

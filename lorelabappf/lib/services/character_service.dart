@@ -48,4 +48,18 @@ class CharacterService {
   Future<void> deleteCharacter(String id) async {
     await _charactersRef.doc(id).delete();
   }
+
+  Future<List<Character>> getCharactersForWorld(String worldId) async {
+  final worldRef =
+      FirebaseFirestore.instance.collection('worlds').doc(worldId);
+
+  final snapshot = await _charactersRef
+      .where('worldId', isEqualTo: worldRef)
+      .get();
+
+  return snapshot.docs
+      .map((doc) => Character.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+      .toList();
+}
+
 }

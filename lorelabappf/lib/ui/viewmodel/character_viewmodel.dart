@@ -45,4 +45,8 @@ class CharacterViewmodel extends ChangeNotifier{
     await loadCharacters();
   }
 
+  Future<List<Character>> loadCharactersForWorld(String worldRef) async {
+  return await _repository.getCharacterForWorld(worldRef);
+}
+
 }

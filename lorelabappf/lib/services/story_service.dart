@@ -50,4 +50,18 @@ class StoryService {
   Future<void> deleteStory(String id) async {
     await _storiesRef.doc(id).delete();
   }
+
+  Future<List<Story>> getStoriesForWorld(String worldId) async {
+  final worldRef =
+      FirebaseFirestore.instance.collection('worlds').doc(worldId);
+
+  final snapshot = await _storiesRef
+      .where('worldId', isEqualTo: worldRef)
+      .get();
+
+  return snapshot.docs
+      .map((doc) => Story.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+      .toList();
+}
+
 }

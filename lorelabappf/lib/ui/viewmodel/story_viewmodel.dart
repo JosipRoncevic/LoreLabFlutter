@@ -46,4 +46,7 @@ class StoryViewmodel extends ChangeNotifier {
     await _repository.deleteStory(id);
     await loadStories();
   }
+  Future<List<Story>> loadStoriesForWorld(String worldRef) async {
+  return await _repository.getStoriesForWorld(worldRef);
+}
 }
