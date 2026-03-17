@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lorelabappf/data/models/character_model.dart';
 import 'package:lorelabappf/services/character_service.dart';
 

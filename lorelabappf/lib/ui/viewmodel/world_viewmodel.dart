@@ -1,26 +1,44 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lorelabappf/data/repository/world_repository.dart';
 import '../../data/models/world_model.dart';
 
-class WorldViewModel extends ChangeNotifier{
-  final WorldRepository _repository = WorldRepository();
+class WorldViewModel extends ChangeNotifier {
+  final WorldRepository _repository;
+
+  WorldViewModel(this._repository);
 
   List<World> worlds = [];
 
-  Future<void> loadWorlds() async {
-    worlds = await _repository.getWorlds();
-    notifyListeners();
-  }
+  bool isLoading = false;
 
-  Future<void> createWorld({required name, required description, required createdOn, required updatedOn, required userId}) async {
-    final newWorld = World(
-      id: '',
-      name: name,
-      description: description,
-      createdOn: createdOn,
-      updatedOn: updatedOn,
-      userId: userId,
-    );
+  Future<void> loadWorlds() async {
+  isLoading = true;
+  notifyListeners();
+
+  worlds = await _repository.getWorlds();
+
+  isLoading = false;
+  notifyListeners();
+}
+
+  Future<void> createWorld({
+  required String name,
+  required String description,
+  required Timestamp createdOn,
+  required Timestamp updatedOn,
+  required String userId,
+}) async {
+      final now = Timestamp.now();
+
+  final newWorld = World(
+    id: '',
+    name: name,
+    description: description,
+    createdOn: now,
+    updatedOn: now,
+    userId: userId,
+  );
 
     await _repository.addWorld(newWorld);
     await loadWorlds();

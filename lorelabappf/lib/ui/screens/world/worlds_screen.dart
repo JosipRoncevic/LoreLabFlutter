@@ -51,6 +51,8 @@ class WorldsScreen extends StatelessWidget {
                     child: Text(
                       world.description,
                       style: CosmicTheme.listSubtitleStyle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   onTap: () {

@@ -19,17 +19,22 @@ class CreatingCharacterScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CreatingCharacterScreen> createState() => _CreatingCharacterScreenState();
+  State<CreatingCharacterScreen> createState() =>
+      _CreatingCharacterScreenState();
 }
 
 class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
   final _formKey = GlobalKey<FormState>();
-  late String _name = '';
-  late String _backstory = '';
+
+  String _name = '';
+  String _backstory = '';
+
   DocumentReference? _worldRef;
   String? _selectedWorldId;
+
   bool _isLoading = false;
-  final userId = FirebaseAuth.instance.currentUser?.uid ?? ''; // Fixed: Get UID, not User object
+
+  final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
   List<World> _worlds = [];
 
@@ -40,75 +45,77 @@ class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
     _name = widget.character?.name ?? '';
     _backstory = widget.character?.backstory ?? '';
 
-    final worldVM = context.read<WorldViewModel>();
-    worldVM.loadWorlds().then((_) {
-      setState(() {
-        _worlds = worldVM.worlds;
+    _loadWorlds();
+  }
 
-        if (widget.character != null) {
-          _selectedWorldId = widget.character!.worldRef.id;
-          _worldRef = widget.character!.worldRef;
-        } else if (_worlds.isNotEmpty) {
-          _selectedWorldId = _worlds.first.id;
-          _worldRef = FirebaseFirestore.instance.collection('worlds').doc(_selectedWorldId);
-        }
-      });
+  Future<void> _loadWorlds() async {
+    final worldVM = context.read<WorldViewModel>();
+
+    await worldVM.loadWorlds();
+
+    setState(() {
+      _worlds = worldVM.worlds;
+
+      if (widget.character != null) {
+        _selectedWorldId = widget.character!.worldRef?.id;
+        _worldRef = widget.character!.worldRef;
+      } else {
+        _selectedWorldId = null;
+        _worldRef = null;
+      }
     });
   }
 
   Future<void> _saveCharacter() async {
-    if (_formKey.currentState!.validate()) {
-      if (_worldRef == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select a world')),
+    if (!_formKey.currentState!.validate()) return;
+
+    if (userId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User not authenticated')),
+      );
+      return;
+    }
+
+    _formKey.currentState!.save();
+
+    setState(() => _isLoading = true);
+
+    try {
+      final viewModel = context.read<CharacterViewmodel>();
+      final now = Timestamp.now();
+
+      if (widget.isEditing && widget.character != null) {
+        final updated = Character(
+          id: widget.character!.id,
+          name: _name,
+          backstory: _backstory,
+          worldRef: _worldRef,
+          createdOn: widget.character!.createdOn,
+          updatedOn: now,
+          userId: userId,
         );
-        return;
-      }
 
-      if (userId.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('User not authenticated')),
+        await viewModel.updateCharacter(updated);
+
+        Navigator.pop(context, true);
+      } else {
+        await viewModel.createCharacter(
+          name: _name,
+          backstory: _backstory,
+          worldRef: _worldRef,
+          createdOn: now,
+          updatedOn: now,
+          userId: userId,
         );
-        return;
+
+        Navigator.pop(context);
       }
+    } catch (e) {
+      setState(() => _isLoading = false);
 
-      _formKey.currentState!.save();
-      setState(() => _isLoading = true);
-
-      try {
-        final viewModel = context.read<CharacterViewmodel>();
-        final now = Timestamp.now();
-        
-        if (widget.isEditing && widget.character != null) {
-          final updated = Character(
-            id: widget.character!.id,
-            name: _name,
-            backstory: _backstory,
-            worldRef: _worldRef!,
-            createdOn: widget.character!.createdOn,
-            updatedOn: now,
-            userId: userId
-          );
-          await viewModel.updateCharacter(updated);
-          Navigator.pop(context, true);
-        } else {
-          await viewModel.createCharacter(
-            name: _name, 
-            backstory: _backstory, 
-            worldRef: _worldRef!, 
-            createdOn: now, 
-            updatedOn: now, 
-            userId: userId
-          );
-          Navigator.pop(context);
-        }
-
-      } catch (e) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 
@@ -124,38 +131,63 @@ class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
           key: _formKey,
           child: Column(
             children: [
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
+
+              /// CHARACTER NAME
               TextFormField(
                 initialValue: _name,
-                decoration: InputDecoration(labelText: 'Character Name'),
+                decoration: const InputDecoration(labelText: 'Character Name'),
                 onSaved: (val) => _name = val ?? '',
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Enter a name' : null,
               ),
-              SizedBox(height: 16),
+
+              const SizedBox(height: 16),
+
+              /// BACKSTORY
               TextFormField(
                 initialValue: _backstory,
                 maxLines: 5,
-                decoration: InputDecoration(labelText: 'Backstory'),
+                decoration: const InputDecoration(labelText: 'Backstory'),
                 onSaved: (val) => _backstory = val ?? '',
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Enter a backstory' : null,
               ),
-              DropdownButtonFormField<String>(
+
+              const SizedBox(height: 16),
+
+              /// WORLD DROPDOWN
+              DropdownButtonFormField<String?>(
                 value: _selectedWorldId,
-                items: _worlds.map((world) {
-                  return DropdownMenuItem(
-                    value: world.id,
+                items: [
+                  DropdownMenuItem<String?>(
+                    value: null,
                     child: Text(
-                      world.name,
-                      style: CosmicTheme.bodyStyle, // Use themed text
+                      "No World",
+                      style: CosmicTheme.bodyStyle,
                     ),
-                  );
-                }).toList(),
+                  ),
+                  ..._worlds.map((world) {
+                    return DropdownMenuItem<String?>(
+                      value: world.id,
+                      child: Text(
+                        world.name,
+                        style: CosmicTheme.bodyStyle,
+                      ),
+                    );
+                  }).toList(),
+                ],
                 onChanged: (value) {
                   setState(() {
                     _selectedWorldId = value;
-                    _worldRef = FirebaseFirestore.instance.collection('worlds').doc(value);
+
+                    if (value == null) {
+                      _worldRef = null;
+                    } else {
+                      _worldRef = FirebaseFirestore.instance
+                          .collection('worlds')
+                          .doc(value);
+                    }
                   });
                 },
                 decoration: InputDecoration(
@@ -164,29 +196,28 @@ class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
                   filled: true,
                   fillColor: CosmicTheme.cosmicPurple.withOpacity(0.2),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: CosmicTheme.galaxyPink, width: 1),
+                    borderSide:
+                        BorderSide(color: CosmicTheme.galaxyPink, width: 1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: CosmicTheme.galaxyPink, width: 1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: CosmicTheme.deleteRed),
+                    borderSide:
+                        BorderSide(color: CosmicTheme.galaxyPink, width: 1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 dropdownColor: CosmicTheme.cosmicPurple,
                 iconEnabledColor: CosmicTheme.galaxyPink,
                 style: CosmicTheme.bodyStyle,
-                validator: (value) => value == null ? 'Please select a world' : null,
               ),
 
-              Spacer(),
+              const Spacer(),
+
+              /// SAVE BUTTON
               _isLoading
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : ElevatedButton.icon(
-                      icon: Icon(Icons.save),
+                      icon: const Icon(Icons.save),
                       label: Text(widget.isEditing ? 'Update' : 'Save'),
                       onPressed: _saveCharacter,
                     ),

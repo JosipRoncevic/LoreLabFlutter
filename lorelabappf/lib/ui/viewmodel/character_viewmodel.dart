@@ -4,31 +4,40 @@ import 'package:lorelabappf/data/models/character_model.dart';
 import 'package:lorelabappf/data/repository/character_repository.dart';
 
 class CharacterViewmodel extends ChangeNotifier{
-  final CharacterRepository _repository = CharacterRepository();
+  final CharacterRepository _repository;
+
+  CharacterViewmodel(this._repository);
 
   List<Character> characters = [];
 
+  bool isLoading = false;
+
   Future<void> loadCharacters() async {
-    characters = await _repository.getCharacters();
+    isLoading = true;
     notifyListeners();
+    characters = await _repository.getCharacters();
+    isLoading = false;
+    notifyListeners();
+
   }
 
   Future<void> createCharacter( {
     required String name,
     required String backstory,
-    required DocumentReference worldRef,
+    DocumentReference? worldRef,
     required Timestamp createdOn,
     required Timestamp updatedOn,
     required String userId,
   }) 
   async {
+    final now = Timestamp.now();
     final newCharacter = Character(
       id: '',
       name: name,
       backstory: backstory,
       worldRef: worldRef,
-      createdOn: createdOn,
-      updatedOn: updatedOn,
+      createdOn: now,
+      updatedOn: now,
       userId: userId,
     );
     await _repository.addCharacter(newCharacter);

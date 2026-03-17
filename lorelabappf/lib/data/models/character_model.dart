@@ -4,7 +4,7 @@ class Character {
   final String id;
   final String name;
   final String backstory;
-  final DocumentReference worldRef;
+  final DocumentReference? worldRef;
   final Timestamp createdOn;
   final Timestamp updatedOn;
   final String userId;
@@ -13,7 +13,7 @@ class Character {
     required this.id,
     required this.name,
     required this.backstory,
-    required this.worldRef,
+    this.worldRef,
     required this.createdOn,
     required this.updatedOn,
     required this.userId,
@@ -24,7 +24,7 @@ class Character {
       id: documentId, 
       name: map['name'] ?? '',
       backstory: map['backstory'] ?? '', 
-      worldRef: map['worldId'] as DocumentReference,
+      worldRef: map['worldId'] as DocumentReference?,
       createdOn: map['createdOn'] ?? Timestamp.now(),
       updatedOn: map['updatedOn'] ?? Timestamp.now(),
       userId: map['userId'] ?? '',

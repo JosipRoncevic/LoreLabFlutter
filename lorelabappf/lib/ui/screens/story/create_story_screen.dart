@@ -53,7 +53,7 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
       setState(() {
         _worlds = worldVM.worlds;
         if (widget.story != null) {
-          _selectedWorldId = widget.story!.worldRef.id;
+          _selectedWorldId = widget.story!.worldRef?.id;
           _worldRef = widget.story!.worldRef;
         } else if (_worlds.isNotEmpty) {
           _selectedWorldId = _worlds.first.id;
@@ -72,49 +72,33 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
     });
   }
 
-  void _showCharacterSelectionDialog() async {
-    if (_selectedWorldId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("You have to choose a world first.")),
-      );
-      return;
-    }
+void _showCharacterSelectionDialog() async {
+  final filteredCharacters = _characters; // no filtering
 
-    final filteredCharacters = _characters
-        .where((char) => char.worldRef.id == _selectedWorldId)
-        .toList();
-
-    if (filteredCharacters.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No characters in this world.")),
-      );
-      return;
-    }
-
-    final selected = await showDialog<List<String>>(
-      context: context,
-      builder: (_) => CharacterSelectionDialog(
-        characters: filteredCharacters,
-        selectedIds: _selectedCharacterIds,
-      ),
+  if (filteredCharacters.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("No characters found...")),
     );
-
-    if (selected != null) {
-      setState(() {
-        _selectedCharacterIds = selected;
-      });
-    } 
+    return;
   }
+
+  final selected = await showDialog<List<String>>(
+    context: context,
+    builder: (_) => CharacterSelectionDialog(
+      characters: filteredCharacters,
+      selectedIds: _selectedCharacterIds,
+    ),
+  );
+
+  if (selected != null) {
+    setState(() {
+      _selectedCharacterIds = selected;
+    });
+  } 
+}
 
   Future<void> _saveStory() async {
     if (_formKey.currentState!.validate()) {
-      if (_worldRef == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select a world')),
-        );
-        return;
-      }
-
       if (userId.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('User not authenticated')),
@@ -138,7 +122,7 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
           id: widget.story!.id,
           title: _title,
           content: _content,
-          worldRef: _worldRef!,
+          worldRef: _worldRef,
           characterRefs: characterRefs,
           userId: userId,
           createdOn: widget.story!.createdOn,
@@ -148,7 +132,14 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
         Navigator.pop(context, true);
 
       } else {
-        await viewModel.createStory(  title: _title,content: _content,worldRef: _worldRef!,characterRefs: characterRefs,userId: userId, createdOn: now,updatedOn: now,);
+        await viewModel.createStory(  
+          title: _title,
+          content: _content,
+          worldRef: _worldRef,
+          characterRefs: characterRefs,
+          userId: userId, 
+          createdOn: now,
+          updatedOn: now,);
         Navigator.pop(context, true);
       }
 
@@ -191,24 +182,39 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
                     val == null || val.isEmpty ? 'Enter content' : null,
               ),
               SizedBox(height: 16),
-               DropdownButtonFormField<String>(
-  value: _selectedWorldId,
-  items: _worlds.map((world) {
-    return DropdownMenuItem(
-      value: world.id,
-      child: Text(
-        world.name,
-        style: CosmicTheme.bodyStyle,
-      ),
-    );
-  }).toList(),
-  onChanged: (value) {
-    setState(() {
-      _selectedWorldId = value;
-      _worldRef = FirebaseFirestore.instance.collection('worlds').doc(value);
-      _selectedCharacterIds = [];
-    });
-  },
+                             DropdownButtonFormField<String?>(
+                value: _selectedWorldId,
+                items: [
+                  DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text(
+                      "No World",
+                      style: CosmicTheme.bodyStyle,
+                    ),
+                  ),
+                  ..._worlds.map((world) {
+                    return DropdownMenuItem<String?>(
+                      value: world.id,
+                      child: Text(
+                        world.name,
+                        style: CosmicTheme.bodyStyle,
+                      ),
+                    );
+                  }).toList(),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    _selectedWorldId = value;
+
+                    if (value == null) {
+                      _worldRef = null;
+                    } else {
+                      _worldRef = FirebaseFirestore.instance
+                          .collection('worlds')
+                          .doc(value);
+                    }
+                  });
+                },
   decoration: InputDecoration(
     labelText: 'Select World',
     labelStyle: CosmicTheme.bodyStyle,
@@ -230,7 +236,7 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
   dropdownColor: CosmicTheme.cosmicPurple,
   iconEnabledColor: CosmicTheme.galaxyPink,
   style: CosmicTheme.bodyStyle,
-  validator: (value) => value == null ? 'Please select a world' : null,
+  validator: (value) => null,
 ),
 
               SizedBox(height: 24),
