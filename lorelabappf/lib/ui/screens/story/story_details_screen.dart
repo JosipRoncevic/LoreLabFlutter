@@ -15,7 +15,7 @@ class StoryDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(story.title),
+        title: Text("Story:"),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -77,7 +77,6 @@ class StoryDetailsScreen extends StatelessWidget {
         ],
       ),
       body: Container(
-        //decoration: CosmicTheme.backgroundDecoration,
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Column(

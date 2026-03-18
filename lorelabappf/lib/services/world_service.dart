@@ -49,8 +49,12 @@ Future<List<World>> fetchWorlds() async {
 }
 
 
-    Future<void> deleteWorld(String id) async {
-      await _worldsRef.doc(id).delete();
-    }
+  Future<void> deleteWorld(String id) async {
+    await _worldsRef.doc(id).delete();
+  }
+
+DocumentReference getWorldReference(String worldId) {
+  return _worldsRef.doc(worldId);
+}
 
 }

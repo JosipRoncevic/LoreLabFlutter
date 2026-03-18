@@ -57,7 +57,7 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
           _worldRef = widget.story!.worldRef;
         } else if (_worlds.isNotEmpty) {
           _selectedWorldId = _worlds.first.id;
-          _worldRef = FirebaseFirestore.instance.collection('worlds').doc(_selectedWorldId);
+          _worldRef = worldVM.getWorldReference(_selectedWorldId!);
         }
       });
     });

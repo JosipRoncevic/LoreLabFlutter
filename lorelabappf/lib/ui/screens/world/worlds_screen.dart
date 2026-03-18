@@ -15,8 +15,7 @@ class WorldsScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // Let the cosmic background show through
-      //appBar: AppBar(title: Text('Worlds')),
+      backgroundColor: Colors.transparent,
       body: Consumer<WorldViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.worlds.isEmpty) {

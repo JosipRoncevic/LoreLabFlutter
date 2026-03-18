@@ -50,7 +50,7 @@ class _WorldDetailScreenState extends State<WorldDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(world.name),
+        title: Text("World:"),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),

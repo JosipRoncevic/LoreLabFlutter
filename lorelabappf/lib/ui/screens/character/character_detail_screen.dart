@@ -30,7 +30,7 @@ class CharacterDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(character.name),
+        title: Text("Character:"),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),

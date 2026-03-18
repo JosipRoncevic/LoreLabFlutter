@@ -54,4 +54,8 @@ class WorldViewModel extends ChangeNotifier {
   await loadWorlds();
 }
 
+DocumentReference getWorldReference(String worldId) {
+  return _repository.getWorldReference(worldId);
+}
+
 }

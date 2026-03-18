@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lorelabappf/services/world_service.dart';
 import '../models/world_model.dart';
 
@@ -8,5 +9,7 @@ class WorldRepository {
   Future<void> addWorld(World world) => _service.addWorld(world);
   Future<void> updateWorld(World world) => _service.updateWorld(world);
   Future<void> deleteWorld(String id) => _service.deleteWorld(id);
-
+  DocumentReference getWorldReference(String worldId) {
+  return _service.getWorldReference(worldId);
+}
 }
