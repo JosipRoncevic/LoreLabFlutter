@@ -11,21 +11,6 @@ class CharacterDetailScreen extends StatelessWidget {
 
   const CharacterDetailScreen({super.key, required this.character});
 
-  Future<String> _fetchWorldName(DocumentReference? worldRef) async {
-    if (worldRef == null) {
-      return "No World";
-    }
-
-    final doc = await worldRef.get();
-
-    if (!doc.exists) {
-      return "Unknown World";
-    }
-
-    final data = doc.data() as Map<String, dynamic>;
-    return data['name'] ?? "Unknown World";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +109,9 @@ class CharacterDetailScreen extends StatelessWidget {
 
                 /// WORLD NAME
                 FutureBuilder<String>(
-                  future: _fetchWorldName(character.worldRef),
+                  future: context
+                    .read<CharacterViewmodel>()
+                    .getWorldName(character.worldRef),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState ==
                         ConnectionState.waiting) {

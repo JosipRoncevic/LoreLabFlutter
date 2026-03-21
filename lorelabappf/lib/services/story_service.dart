@@ -6,8 +6,7 @@ class StoryService {
   final CollectionReference _storiesRef = 
     FirebaseFirestore.instance.collection('stories');
 
-  Future<List<Story>> fetchStories() async {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
+  Future<List<Story>> fetchStories(String? userId) async {
     if(userId == null) return [];
 
     var snapshot = await _storiesRef

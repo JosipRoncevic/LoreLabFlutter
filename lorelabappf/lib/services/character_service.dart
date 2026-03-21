@@ -6,8 +6,7 @@ class CharacterService {
   final CollectionReference _charactersRef = 
     FirebaseFirestore.instance.collection('characters');
 
-  Future<List<Character>> fetchCharacters() async {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
+  Future<List<Character>> fetchCharacters(String? userId) async {
     if(userId == null) return [];
 
     var snapshot = await _charactersRef
@@ -59,6 +58,12 @@ class CharacterService {
 
   return snapshot.docs
       .map((doc) => Character.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+      .toList();
+}
+List<DocumentReference> buildCharacterRefs(List<String> ids) {
+  return ids
+      .map((id) => _charactersRef
+          .doc(id))
       .toList();
 }
 

@@ -87,7 +87,8 @@ class StoryDetailsScreen extends StatelessWidget {
               Text(story.content, style: CosmicTheme.bodyStyle),
               const SizedBox(height: 12),
               FutureBuilder<String>(
-                future: _fetchWorldName(story.worldRef),
+                future: context
+                .read<StoryViewmodel>().getWorldName(story.worldRef),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Text("Loading world...", style: CosmicTheme.bodyStyle);
@@ -102,7 +103,8 @@ class StoryDetailsScreen extends StatelessWidget {
               Text("Characters in this story:", style: CosmicTheme.listTitleStyle),
               const SizedBox(height: 8),
               FutureBuilder<List<String>>(
-                future: _fetchCharacterNames(story.characterRefs),
+                  future: context
+                  .read<StoryViewmodel>().getCharacterNames(story.characterRefs),
                 builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
       return const CircularProgressIndicator(color: CosmicTheme.galaxyPink);
@@ -146,57 +148,6 @@ class StoryDetailsScreen extends StatelessWidget {
       ),
     );
   }
-
-Future<String> _fetchWorldName(DocumentReference? worldRef) async {
-  if (worldRef == null) {
-    return "No World";
-  }
-
-  final doc = await worldRef.get();
-
-  if (!doc.exists) {
-    return "Unknown World";
-  }
-
-  final data = doc.data() as Map<String, dynamic>;
-  return data['name'] ?? "Unknown World";
-}
-
-  Future<List<Map<String, dynamic>>> _fetchCharacterNamesWithValidation(
-      List<DocumentReference> refs, DocumentReference? storyWorldRef) async {
-    final characters = <Map<String, dynamic>>[];
-
-    for (final ref in refs) {
-      final doc = await ref.get();
-      if (doc.exists) {
-        final data = doc.data() as Map<String, dynamic>;
-        final name = data['name'] ?? 'Unnamed';
-        final characterWorldRef = data['worldId'];
-
-      final isMismatch = storyWorldRef != null &&
-    characterWorldRef?.path != storyWorldRef.path;
-        characters.add({
-          'name': name,
-          'isMismatch': isMismatch,
-        });
-      }
-    }
-    return characters;
-  }
-  Future<List<String>> _fetchCharacterNames(List<DocumentReference> refs) async {
-  final characters = <String>[];
-
-  for (final ref in refs) {
-    final doc = await ref.get();
-    if (doc.exists) {
-      final data = doc.data() as Map<String, dynamic>;
-      final name = data['name'] ?? 'Unnamed';
-      characters.add(name);
-    }
-  }
-
-  return characters;
-}
 
   String formatTimestamp(Timestamp timestamp) {
     final date = timestamp.toDate();

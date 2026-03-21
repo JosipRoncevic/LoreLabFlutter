@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lorelabappf/data/models/story_model.dart';
 import 'package:lorelabappf/data/repository/story_repository.dart';
@@ -10,11 +11,13 @@ class StoryViewmodel extends ChangeNotifier {
   List<Story> stories = [];
 
   bool isLoading = false;
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+
 
   Future<void> loadStories() async {
     isLoading = true;
     notifyListeners();
-    stories = await _repository.getStories();
+    stories = await _repository.getStories(userId);
     isLoading = false;
     notifyListeners();
     
@@ -56,5 +59,34 @@ class StoryViewmodel extends ChangeNotifier {
   }
   Future<List<Story>> loadStoriesForWorld(String worldRef) async {
   return await _repository.getStoriesForWorld(worldRef);
+}
+Future<String> getWorldName(DocumentReference? worldRef) async {
+  if (worldRef == null) {
+    return "No World";
+  }
+
+  final doc = await worldRef.get();
+
+  if (!doc.exists) {
+    return "No World";
+  }
+
+  final data = doc.data() as Map<String, dynamic>;
+  return data['name'] ?? "No World";
+}
+
+  Future<List<String>> getCharacterNames(List<DocumentReference> refs) async {
+  final characters = <String>[];
+
+  for (final ref in refs) {
+    final doc = await ref.get();
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+      final name = data['name'] ?? 'Unnamed';
+      characters.add(name);
+    }
+  }
+
+  return characters;
 }
 }

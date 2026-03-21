@@ -73,7 +73,7 @@ class _CreatingStoryScreenState extends State<CreatingStoryScreen> {
   }
 
 void _showCharacterSelectionDialog() async {
-  final filteredCharacters = _characters; // no filtering
+  final filteredCharacters = _characters; 
 
   if (filteredCharacters.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -109,9 +109,8 @@ void _showCharacterSelectionDialog() async {
       _formKey.currentState!.save();
       setState(() => _isLoading = true);
 
-      final characterRefs = _selectedCharacterIds
-        .map((id) => FirebaseFirestore.instance.collection('characters').doc(id))
-        .toList();
+      final charVM = context.read<CharacterViewmodel>();
+      final characterRefs = charVM.buildCharacterRefs(_selectedCharacterIds);
 
     try {
       final viewModel = context.read<StoryViewmodel>();
@@ -203,18 +202,18 @@ void _showCharacterSelectionDialog() async {
                   }).toList(),
                 ],
                 onChanged: (value) {
-                  setState(() {
-                    _selectedWorldId = value;
+  setState(() {
+    _selectedWorldId = value;
 
-                    if (value == null) {
-                      _worldRef = null;
-                    } else {
-                      _worldRef = FirebaseFirestore.instance
-                          .collection('worlds')
-                          .doc(value);
-                    }
-                  });
-                },
+    if (value == null) {
+      _worldRef = null;
+    } else {
+      _worldRef = context
+          .read<WorldViewModel>()
+          .getWorldReference(value);
+    }
+  });
+},
   decoration: InputDecoration(
     labelText: 'Select World',
     labelStyle: CosmicTheme.bodyStyle,

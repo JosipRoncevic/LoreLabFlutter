@@ -7,8 +7,7 @@ class WorldService {
     FirebaseFirestore.instance.collection('worlds');
 
 
-Future<List<World>> fetchWorlds() async {
-  final userId = FirebaseAuth.instance.currentUser?.uid;
+Future<List<World>> fetchWorlds(String? userId) async {
   if (userId == null) return [];
 
   var snapshot = await _worldsRef

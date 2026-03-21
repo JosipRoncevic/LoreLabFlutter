@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lorelabappf/data/models/character_model.dart';
 import 'package:lorelabappf/data/repository/character_repository.dart';
@@ -11,11 +12,13 @@ class CharacterViewmodel extends ChangeNotifier{
   List<Character> characters = [];
 
   bool isLoading = false;
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+
 
   Future<void> loadCharacters() async {
     isLoading = true;
     notifyListeners();
-    characters = await _repository.getCharacters();
+    characters = await _repository.getCharacters(userId);
     isLoading = false;
     notifyListeners();
 
@@ -56,6 +59,20 @@ class CharacterViewmodel extends ChangeNotifier{
 
   Future<List<Character>> loadCharactersForWorld(String worldRef) async {
   return await _repository.getCharacterForWorld(worldRef);
+}
+
+Future<String> getWorldName(DocumentReference? worldRef) async {
+  if (worldRef == null) return "No World";
+
+  final doc = await worldRef.get();
+  if (!doc.exists) return "Unknown World";
+
+  final data = doc.data() as Map<String, dynamic>;
+  return data['name'] ?? "Unknown World";
+}
+
+  List<DocumentReference> buildCharacterRefs(List<String> ids) {
+  return _repository.buildCharacterRefs(ids);
 }
 
 }

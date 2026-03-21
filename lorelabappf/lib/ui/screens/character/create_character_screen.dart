@@ -178,18 +178,18 @@ class _CreatingCharacterScreenState extends State<CreatingCharacterScreen> {
                   }).toList(),
                 ],
                 onChanged: (value) {
-                  setState(() {
-                    _selectedWorldId = value;
+  setState(() {
+    _selectedWorldId = value;
 
-                    if (value == null) {
-                      _worldRef = null;
-                    } else {
-                      _worldRef = FirebaseFirestore.instance
-                          .collection('worlds')
-                          .doc(value);
-                    }
-                  });
-                },
+    if (value == null) {
+      _worldRef = null;
+    } else {
+      _worldRef = context
+          .read<WorldViewModel>()
+          .getWorldReference(value);
+    }
+  });
+},
                 decoration: InputDecoration(
                   labelText: 'Select World',
                   labelStyle: CosmicTheme.bodyStyle,
