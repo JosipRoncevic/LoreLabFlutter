@@ -1,5 +1,5 @@
 import 'package:lorelabappf/data/models/story_model.dart';
-import 'package:lorelabappf/services/story_service.dart';
+import 'package:lorelabappf/data/services/story_service.dart';
 
 class StoryRepository {
   final StoryService _service = StoryService();

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lorelabappf/data/repository/world_repository.dart';
 import '../../data/models/world_model.dart';
@@ -13,13 +12,11 @@ class WorldViewModel extends ChangeNotifier {
 
   bool isLoading = false;
 
-  final userId = FirebaseAuth.instance.currentUser?.uid;
-
   Future<void> loadWorlds() async {
   isLoading = true;
   notifyListeners();
 
-  worlds = await _repository.getWorlds(userId);
+  worlds = await _repository.getWorlds();
 
   isLoading = false;
   notifyListeners();
